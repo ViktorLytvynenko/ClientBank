@@ -15,10 +15,6 @@ public class CollectionCustomerDao implements CustomerDao {
 
     public CollectionCustomerDao() {
         this.customers = new ArrayList<>();
-        Customer customer1 = new Customer(1L, "Max", "qwe@gmail.com", 35);
-        customers.add(customer1);
-        customers.add(new Customer(2L, "Viktor", "sgdsgdsg@gmail.com", 31));
-        customers.add(new Customer(3L, "Andrew", "sdgdsg@gmail.com", 25));
     }
 
     @Override

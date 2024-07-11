@@ -6,11 +6,9 @@ import org.example.clientbank.dao.CollectionCustomerDao;
 import org.example.clientbank.entity.Account;
 import org.example.clientbank.entity.Customer;
 import org.example.clientbank.enums.Currency;
-import org.springframework.http.ResponseEntity;
+import org.example.clientbank.enums.status.CustomerStatus;
 import org.springframework.stereotype.Service;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,16 +28,8 @@ public class CustomerService {
         return collectionCustomerDao.deleteById(id);
     }
 
-    public void deleteAll(List<Customer> list) {
-        collectionCustomerDao.deleteAll(list);
-    }
-
-    public void saveAll(List<Customer> list) {
-        collectionCustomerDao.saveAll(list);
-    }
-
-    public ResponseEntity<List<Customer>> findAll() {
-        return ResponseEntity.ok(collectionCustomerDao.findAll());
+    public List<Customer> findAll() {
+        return collectionCustomerDao.findAll();
     }
 
     public Optional<Customer> getCustomerById(long id) {
@@ -50,83 +40,95 @@ public class CustomerService {
         return collectionCustomerDao.getOne(customer);
     }
 
-    public ResponseEntity<String> createCustomer(String name, String email, Integer age) {
-        Customer customer = new Customer(name, email, age);
-        collectionCustomerDao.save(customer);
-        return ResponseEntity.ok("Customer was successfully created.");
+    public void createCustomer(String name, String email, Integer age) {
+        collectionCustomerDao.save(new Customer(name, email, age));
     }
 
-    public ResponseEntity<String> updateCustomer(Customer customer) {
+    public CustomerStatus updateCustomer(Customer customer) {
         List<Customer> allCustomers = collectionCustomerDao.findAll();
 
         Optional<Customer> existingCustomer = getCustomerByCustomer(customer);
 
         if (existingCustomer.isPresent()) {
-            Customer c = existingCustomer.get();
-
-            if (!c.equals(customer)) {
-                int index = allCustomers.indexOf(c);
+            if (!existingCustomer.get().equals(customer)) {
+                int index = allCustomers.indexOf(existingCustomer.get());
                 allCustomers.set(index, customer);
-                return ResponseEntity.ok("Customer was successfully updated.");
+                return CustomerStatus.SUCCESS;
             } else {
-                return ResponseEntity.ok("No changes needed.");
+                return CustomerStatus.NOTHING_TO_UPDATE;
             }
         } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
+            return CustomerStatus.CUSTOMER_NOT_FOUND;
         }
     }
 
-    public ResponseEntity<String> deleteAccountsByCustomerId(long id) {
-        return getCustomerById(id).map(customer -> {
-            customer.getAccounts().clear();
-            updateCustomer(customer);
-            return ResponseEntity.ok("All accounts were successfully deleted.");
-        }).orElse(ResponseEntity.badRequest().body("Customer not found."));
+    public boolean deleteAccountsByCustomerId(long id) {
+        Optional<Customer> customerOptional = getCustomerById(id);
+        if (customerOptional.isEmpty()) {
+            return false;
+        }
+        customerOptional.get().getAccounts().clear();
+        updateCustomer(customerOptional.get());
+        return true;
     }
 
-    public ResponseEntity<String> deleteAccountsByCustomer(Customer customer) {
-        return getCustomerByCustomer(customer).map(c -> {
-            c.getAccounts().clear();
-            updateCustomer(customer);
-            return ResponseEntity.ok("All accounts were successfully deleted.");
-        }).orElse(ResponseEntity.badRequest().body("Customer not found."));
+    public boolean deleteAccountsByCustomer(Customer customer) {
+        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
+        if (customerOptional.isEmpty()) {
+            return false;
+        }
+        customerOptional.get().getAccounts().clear();
+        updateCustomer(customerOptional.get());
+        return true;
     }
 
-    public ResponseEntity<String> deleteAccountByCustomer(Customer customer, String accountNumber) {
+    public CustomerStatus deleteAccountByCustomer(Customer customer, String accountNumber) {
+        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
+        if (customerOptional.isEmpty()) {
+            return CustomerStatus.CUSTOMER_NOT_FOUND;
+        }
+
         boolean removed = customer.getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
         if (removed) {
-            return ResponseEntity.ok("Account was successfully deleted.");
+            return CustomerStatus.SUCCESS;
         } else {
-            return ResponseEntity.badRequest().body("Account not found.");
+            return CustomerStatus.CARD_NOT_FOUND;
         }
     }
 
-    public ResponseEntity<String> deleteAccountByCustomerId(long id, String accountNumber) {
-        return getCustomerById(id)
-                .map(customer -> {
-                    boolean removed = customer.getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
-                    if (removed) {
-                        return ResponseEntity.ok("Account was successfully deleted.");
-                    } else {
-                        return ResponseEntity.badRequest().body("Account not found.");
-                    }
-                })
-                .orElseGet(() -> ResponseEntity.badRequest().body("Customer not found."));
+    public CustomerStatus deleteAccountByCustomerId(long id, String accountNumber) {
+        Optional<Customer> customerOptional = getCustomerById(id);
+
+        if (customerOptional.isEmpty()) {
+            return CustomerStatus.CUSTOMER_NOT_FOUND;
+        }
+        boolean removed = customerOptional.get().getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
+        if (removed) {
+            return CustomerStatus.SUCCESS;
+        } else {
+            return CustomerStatus.CARD_NOT_FOUND;
+        }
     }
 
-    public ResponseEntity<String> createAccountByCustomer(Customer customer, Currency currency) {
-        return getCustomerByCustomer(customer).map(c -> {
-                    c.getAccounts().add(new Account(currency, customer));
-                    return ResponseEntity.ok("Customer was successfully created.");
-                })
-                .orElse(ResponseEntity.badRequest().body("Customer not found."));
+    public boolean createAccountByCustomer(Customer customer, Currency currency) {
+        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
+
+        if (customerOptional.isEmpty()) {
+            return false;
+        }
+
+        customerOptional.get().getAccounts().add(new Account(currency, customer));
+        return true;
     }
 
-    public ResponseEntity<String> createAccountByCustomerId(long id, Currency currency) {
-        return getCustomerById(id).map(c -> {
-                    c.getAccounts().add(new Account(currency, c));
-                    return ResponseEntity.ok("Customer was successfully created.");
-                })
-                .orElse(ResponseEntity.badRequest().body("Customer not found."));
+    public boolean createAccountByCustomerId(long id, Currency currency) {
+        Optional<Customer> customerOptional = getCustomerById(id);
+
+        if (customerOptional.isEmpty()) {
+            return false;
+        }
+
+        customerOptional.get().getAccounts().add(new Account(currency, customerOptional.get()));
+        return true;
     }
 }
