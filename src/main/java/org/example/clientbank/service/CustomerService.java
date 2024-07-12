@@ -45,13 +45,14 @@ public class CustomerService {
     }
 
     public CustomerStatus updateCustomer(Customer customer) {
+        Optional<Customer> customerOptional = getCustomerById(customer.getId());
         List<Customer> allCustomers = collectionCustomerDao.findAll();
 
-        Optional<Customer> existingCustomer = getCustomerByCustomer(customer);
-
-        if (existingCustomer.isPresent()) {
-            if (!existingCustomer.get().equals(customer)) {
-                int index = allCustomers.indexOf(existingCustomer.get());
+        if (customerOptional.isPresent()) {
+            if (!customerOptional.get().getName().equals(customer.getName())
+                    || !customerOptional.get().getEmail().equals(customer.getEmail())
+                    || !customerOptional.get().getAge().equals(customer.getAge())) {
+                int index = allCustomers.indexOf(customerOptional.get());
                 allCustomers.set(index, customer);
                 return CustomerStatus.SUCCESS;
             } else {
@@ -61,6 +62,7 @@ public class CustomerService {
             return CustomerStatus.CUSTOMER_NOT_FOUND;
         }
     }
+
 
     public boolean deleteAccountsByCustomerId(long id) {
         Optional<Customer> customerOptional = getCustomerById(id);
