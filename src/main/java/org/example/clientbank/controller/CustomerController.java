@@ -68,7 +68,6 @@ public class CustomerController {
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
         log.info("Trying to update customer");
-        log.info(customerDTO.toString());
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Customer not found.");
@@ -110,7 +109,7 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/create_account_by_id")
+    @PutMapping("/create_account_by_id")
     public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         log.info(createAccountByIdModel);
