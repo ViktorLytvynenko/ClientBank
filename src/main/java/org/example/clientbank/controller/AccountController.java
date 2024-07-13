@@ -2,14 +2,12 @@ package org.example.clientbank.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.example.clientbank.entity.Account;
 import org.example.clientbank.enums.status.AccountStatus;
-import org.example.clientbank.model.AddFundsModel;
+import org.example.clientbank.model.AddWithdrawFundsModel;
+import org.example.clientbank.model.SendFundsModel;
 import org.example.clientbank.service.AccountServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -23,21 +21,22 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<String> addFunds(@RequestBody AddFundsModel addFundsModel) {
+    public ResponseEntity<String> addFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to add funds");
-        Optional<Account> accountOptional = accountService.getAccountByAccountNumber(addFundsModel.cardNumber());
-        log.info(addFundsModel.cardNumber());
-        if (accountOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Account not found.");
-        }
-        accountService.addFunds(addFundsModel.cardNumber(), addFundsModel.sum());
-        return ResponseEntity.ok("Funds add successfully.");
+
+        AccountStatus status = accountService.addFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
+        return switch (status) {
+            case SUCCESS -> ResponseEntity.ok("Funds add successfully.");
+            case ACCOUNT_NOT_FOUND -> ResponseEntity.badRequest().body("Account not found.");
+            default -> ResponseEntity.badRequest().body("An unexpected error occurred.");
+        };
     }
 
     @PostMapping("/withdraw_funds")
-    public ResponseEntity<String> withdrawFunds(@RequestParam String number, @RequestParam double sum) {
+    public ResponseEntity<String> withdrawFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to withdraw funds");
-        AccountStatus status = accountService.withdrawFunds(number, sum);
+
+        AccountStatus status = accountService.withdrawFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Funds withdrawn successfully.");
             case INSUFFICIENT_FUNDS -> ResponseEntity.badRequest().body("Insufficient funds.");
@@ -47,11 +46,9 @@ public class AccountController {
     }
 
     @PostMapping("/send_funds")
-    public ResponseEntity<String> sendFunds(@RequestParam String numberFrom,
-                                            @RequestParam String numberTo,
-                                            @RequestParam double sum) {
+    public ResponseEntity<String> sendFunds(@RequestBody SendFundsModel sendFundsModel) {
         log.info("Trying to send funds");
-        AccountStatus status = accountService.sendFunds(numberFrom, numberTo, sum);
+        AccountStatus status = accountService.sendFunds(sendFundsModel.numberFrom(), sendFundsModel.numberTo(), sendFundsModel.sum());
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Funds sent successfully.");
             case ACCOUNT_FROM_NOT_FOUND -> ResponseEntity.badRequest().body("Account from not found.");

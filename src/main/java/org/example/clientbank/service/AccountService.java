@@ -6,9 +6,10 @@ import org.example.clientbank.enums.status.AccountStatus;
 import java.util.Optional;
 
 public interface AccountService {
+
     Optional<Account> getAccountByAccountNumber(String number);
 
-    void addFunds(String number, double sum);
+    AccountStatus addFunds(String number, double sum);
 
     AccountStatus withdrawFunds(String number, double sum);
 

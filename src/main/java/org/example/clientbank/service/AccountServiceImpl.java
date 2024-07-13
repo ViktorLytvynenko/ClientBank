@@ -11,17 +11,19 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final CollectionAccountDao collectionAccountDaoDao;
-
+    private final CollectionAccountDao collectionAccountDao;
 
     @Override
     public Optional<Account> getAccountByAccountNumber(String number) {
-        return collectionAccountDaoDao.findByNumber(number);
+        return collectionAccountDao.findByNumber(number);
     }
 
     @Override
-    public void addFunds(String number, double sum) {
-        getAccountByAccountNumber(number).ifPresent(a -> a.setBalance(a.getBalance() + sum));
+    public AccountStatus addFunds(String number, double sum) {
+        return getAccountByAccountNumber(number).map(a -> {
+            a.setBalance(a.getBalance() + sum);
+            return AccountStatus.SUCCESS;
+        }).orElse(AccountStatus.ACCOUNT_NOT_FOUND);
     }
 
     @Override

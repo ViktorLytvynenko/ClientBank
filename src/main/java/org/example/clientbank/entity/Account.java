@@ -3,6 +3,7 @@ package org.example.clientbank.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.enums.Currency;
 
@@ -13,6 +14,8 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = PRIVATE)
 @Data
+//уточнить на счет єтого
+@ToString(exclude = "customer")
 public class Account extends AbstractEntity {
     Long id;
     final String number;
