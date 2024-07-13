@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.entity.Account;
 import org.example.clientbank.enums.status.AccountStatus;
-import org.example.clientbank.service.AccountService;
+import org.example.clientbank.service.AccountServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,7 @@ import java.util.Optional;
 }, allowedHeaders = "*")
 @RequiredArgsConstructor
 public class AccountController {
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
     public ResponseEntity<String> addFunds(@RequestParam String number, @RequestParam double sum) {

@@ -2,12 +2,13 @@ package org.example.clientbank.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.example.clientbank.dto.CustomerDTO;
 import org.example.clientbank.entity.Customer;
 import org.example.clientbank.enums.status.CustomerStatus;
 import org.example.clientbank.model.CreateAccountByIdModel;
 import org.example.clientbank.model.CreateAccountModel;
 import org.example.clientbank.model.DeleteAccountModel;
-import org.example.clientbank.service.CustomerService;
+import org.example.clientbank.service.CustomerServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ import java.util.Optional;
 }, allowedHeaders = "*")
 @RequiredArgsConstructor
 public class CustomerController {
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
     @GetMapping
     public ResponseEntity<List<Customer>> findAll() {
@@ -63,10 +64,15 @@ public class CustomerController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<String> updateCustomer(@RequestBody Customer customer) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
         log.info("Trying to update customer");
-        CustomerStatus status = customerService.updateCustomer(customer);
+        Optional<Customer> customerOptional = customerService.getCustomerById(id);
+        if (customerOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Customer not found.");
+        }
+
+        CustomerStatus status = customerService.updateCustomer(customerOptional.get(), customerDTO);
 
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Customer updated successfully.");
