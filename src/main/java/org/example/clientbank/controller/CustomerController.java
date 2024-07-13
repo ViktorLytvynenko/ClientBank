@@ -112,9 +112,6 @@ public class CustomerController {
     @PostMapping("/create_account_by_id")
     public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
-        log.info(createAccountByIdModel);
-        log.info(createAccountByIdModel.id());
-        log.info(createAccountByIdModel.currency());
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
         boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
 

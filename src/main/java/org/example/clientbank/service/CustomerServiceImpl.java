@@ -2,6 +2,7 @@ package org.example.clientbank.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.example.clientbank.dao.CollectionAccountDao;
 import org.example.clientbank.dao.CollectionCustomerDao;
 import org.example.clientbank.dto.CustomerDTO;
 import org.example.clientbank.entity.Account;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CollectionCustomerDao collectionCustomerDao;
+    private final CollectionAccountDao collectionAccountDao;
 
 
     @Override
@@ -169,7 +171,9 @@ public class CustomerServiceImpl implements CustomerService {
             return false;
         }
 
-        customerOptional.get().getAccounts().add(new Account(currency, customerOptional.get()));
+        Account newAccount = new Account(currency, customerOptional.get());
+        customerOptional.get().getAccounts().add(newAccount);
+        collectionAccountDao.save(newAccount);
         updateCustomer(customerOptional.get());
         return true;
     }
