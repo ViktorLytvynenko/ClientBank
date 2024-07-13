@@ -1,5 +1,6 @@
 package org.example.clientbank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +17,8 @@ public class Account extends AbstractEntity {
     final String number;
     Currency currency;
     Double balance;
+    //уточнить на счет этого!
+    @JsonIgnore
     Customer customer;
 
     public Account(Currency currency, Customer customer) {
