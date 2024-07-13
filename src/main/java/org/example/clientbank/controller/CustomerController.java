@@ -68,6 +68,7 @@ public class CustomerController {
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
         log.info("Trying to update customer");
+        log.info(customerDTO.toString());
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Customer not found.");
