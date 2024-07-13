@@ -21,7 +21,7 @@ public interface CustomerService {
 
     void createCustomer(String name, String email, Integer age);
 
-    CustomerStatus updateCustomer(Customer customer);
+    void updateCustomer(Customer customer);
 
     CustomerStatus updateCustomer(Customer customer, CustomerDTO customerDTO);
 
@@ -37,5 +37,5 @@ public interface CustomerService {
 
     boolean createAccountByCustomerId(long id, Currency currency);
 
-    void updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO);
+    boolean updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO);
 }

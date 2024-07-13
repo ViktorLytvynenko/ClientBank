@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
     private final CollectionCustomerDao collectionCustomerDao;
 
@@ -52,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public CustomerStatus updateCustomer(Customer customer) {
+    public void updateCustomer(Customer customer) {
         Optional<Customer> customerOptional = getCustomerById(customer.getId());
         List<Customer> allCustomers = collectionCustomerDao.findAll();
 
@@ -67,10 +67,6 @@ public class CustomerServiceImpl implements CustomerService{
             if (index != -1) {
                 allCustomers.set(index, existingCustomer);
             }
-
-            return CustomerStatus.SUCCESS;
-        } else {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
         }
     }
 
@@ -82,19 +78,13 @@ public class CustomerServiceImpl implements CustomerService{
         if (customerOptional.isPresent()) {
             Customer existingCustomer = customerOptional.get();
 
-            if (!existingCustomer.getName().equals(customerDTO.getName())
-                    || !existingCustomer.getEmail().equals(customerDTO.getEmail())
-                    || !existingCustomer.getAge().equals(customerDTO.getAge())) {
+            boolean updated = updateCustomerFromDTO(existingCustomer, customerDTO);
 
-                existingCustomer.setName(customerDTO.getName());
-                existingCustomer.setEmail(customerDTO.getEmail());
-                existingCustomer.setAge(customerDTO.getAge());
-
+            if (updated) {
                 int index = allCustomers.indexOf(existingCustomer);
                 if (index != -1) {
                     allCustomers.set(index, existingCustomer);
                 }
-
                 return CustomerStatus.SUCCESS;
             } else {
                 return CustomerStatus.NOTHING_TO_UPDATE;
@@ -181,10 +171,15 @@ public class CustomerServiceImpl implements CustomerService{
         return true;
     }
 
-    @Override
-    public void updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO) {
-        customer.setName(customerDTO.getName());
-        customer.setEmail(customerDTO.getEmail());
-        customer.setAge(customerDTO.getAge());
+    public boolean updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO) {
+        if (!customer.getName().equals(customerDTO.getName())
+                || !customer.getEmail().equals(customerDTO.getEmail())
+                || !customer.getAge().equals(customerDTO.getAge())) {
+            customer.setName(customerDTO.getName());
+            customer.setEmail(customerDTO.getEmail());
+            customer.setAge(customerDTO.getAge());
+            return true;
+        }
+        return false;
     }
 }
