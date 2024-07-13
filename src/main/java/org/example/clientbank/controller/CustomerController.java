@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.dto.CustomerDTO;
 import org.example.clientbank.entity.Customer;
+import org.example.clientbank.enums.Currency;
 import org.example.clientbank.enums.status.CustomerStatus;
 import org.example.clientbank.model.CreateAccountByIdModel;
 import org.example.clientbank.model.CreateAccountModel;
@@ -112,8 +113,10 @@ public class CustomerController {
     public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         log.info(createAccountByIdModel);
-
-        boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), createAccountByIdModel.currency());
+        log.info(createAccountByIdModel.id());
+        log.info(createAccountByIdModel.currency());
+        Currency currency = Currency.valueOf(createAccountByIdModel.currency());
+        boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
 
         if (created) {
             return ResponseEntity.ok("Account created successfully.");
