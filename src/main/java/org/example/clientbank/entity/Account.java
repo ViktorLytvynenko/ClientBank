@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @Data
 public class Account extends AbstractEntity {
-    String number;
+    final String number;
     Currency currency;
     Double balance;
     Customer customer;
