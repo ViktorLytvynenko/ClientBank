@@ -109,7 +109,6 @@ public class CustomerController {
         }
     }
 
-
     @PostMapping("/create_account_by_id")
     public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
