@@ -34,6 +34,7 @@ public class CollectionCustomerDao implements CustomerDao {
         customers.removeAll(list);
     }
 
+    //что лучше использовать этот метод или поиск по индексу и замена потом?
     @Override
     public void saveAll(List<Customer> list) {
         for (Customer customer : list) {

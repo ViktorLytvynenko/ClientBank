@@ -62,6 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setName(customer.getName());
             existingCustomer.setEmail(customer.getEmail());
             existingCustomer.setAge(customer.getAge());
+            existingCustomer.setAccounts(customer.getAccounts());
 
             int index = allCustomers.indexOf(existingCustomer);
             if (index != -1) {
@@ -156,6 +157,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerOptional.get().getAccounts().add(new Account(currency, customer));
+        updateCustomer(customerOptional.get());
         return true;
     }
 
@@ -168,6 +170,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerOptional.get().getAccounts().add(new Account(currency, customerOptional.get()));
+        updateCustomer(customerOptional.get());
         return true;
     }
 
