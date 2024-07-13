@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @Data
 public class Account extends AbstractEntity {
+    Long id;
     final String number;
     Currency currency;
     Double balance;
@@ -22,6 +23,7 @@ public class Account extends AbstractEntity {
     Customer customer;
 
     public Account(Currency currency, Customer customer) {
+        this.id = null;
         this.number = UUID.randomUUID().toString();
         this.currency = currency;
         this.balance = 0.0;

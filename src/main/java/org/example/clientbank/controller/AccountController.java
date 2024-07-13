@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.entity.Account;
 import org.example.clientbank.enums.status.AccountStatus;
+import org.example.clientbank.model.AddFundsModel;
 import org.example.clientbank.service.AccountServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,14 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<String> addFunds(@RequestParam String number, @RequestParam double sum) {
+    public ResponseEntity<String> addFunds(@RequestBody AddFundsModel addFundsModel) {
         log.info("Trying to add funds");
-        Optional<Account> accountOptional = accountService.getAccountByAccountNumber(number);
+        Optional<Account> accountOptional = accountService.getAccountByAccountNumber(addFundsModel.cardNumber());
+        log.info(addFundsModel.cardNumber());
         if (accountOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Account not found.");
         }
-        accountService.addFunds(number, sum);
+        accountService.addFunds(addFundsModel.cardNumber(), addFundsModel.sum());
         return ResponseEntity.ok("Funds add successfully.");
     }
 
