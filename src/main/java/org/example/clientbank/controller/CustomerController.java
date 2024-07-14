@@ -21,7 +21,8 @@ import java.util.Optional;
 @RequestMapping("/api/customers")
 @CrossOrigin(origins = {
         "http://localhost:3000",
-        "http://localhost:3001"
+        "http://localhost:3001",
+        "https://client-bank-front-end.vercel.app"
 }, allowedHeaders = "*")
 @RequiredArgsConstructor
 public class CustomerController {
