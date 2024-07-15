@@ -24,11 +24,6 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public boolean deleteByCustomer(Customer customer) {
-        return collectionCustomerDao.delete(customer);
-    }
-
-    @Override
     public boolean deleteById(long id) {
         return collectionCustomerDao.deleteById(id);
     }
@@ -41,11 +36,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<Customer> getCustomerById(long id) {
         return collectionCustomerDao.getOne(id);
-    }
-
-    @Override
-    public Optional<Customer> getCustomerByCustomer(Customer customer) {
-        return collectionCustomerDao.getOne(customer);
     }
 
     @Override
@@ -110,32 +100,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean deleteAccountsByCustomer(Customer customer) {
-        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
-        if (customerOptional.isEmpty()) {
-            return false;
-        }
-        customerOptional.get().getAccounts().clear();
-        updateCustomer(customerOptional.get());
-        return true;
-    }
-
-    @Override
-    public CustomerStatus deleteAccountByCustomer(Customer customer, String accountNumber) {
-        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
-        if (customerOptional.isEmpty()) {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
-        }
-
-        boolean removed = customer.getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
-        if (removed) {
-            return CustomerStatus.SUCCESS;
-        } else {
-            return CustomerStatus.CARD_NOT_FOUND;
-        }
-    }
-
-    @Override
     public CustomerStatus deleteAccountByCustomerId(long id, String accountNumber) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
@@ -148,19 +112,6 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             return CustomerStatus.CARD_NOT_FOUND;
         }
-    }
-
-    @Override
-    public boolean createAccountByCustomer(Customer customer, Currency currency) {
-        Optional<Customer> customerOptional = getCustomerByCustomer(customer);
-
-        if (customerOptional.isEmpty()) {
-            return false;
-        }
-
-        customerOptional.get().getAccounts().add(new Account(currency, customer));
-        updateCustomer(customerOptional.get());
-        return true;
     }
 
     @Override

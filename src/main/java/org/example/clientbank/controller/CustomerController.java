@@ -7,8 +7,6 @@ import org.example.clientbank.entity.Customer;
 import org.example.clientbank.enums.Currency;
 import org.example.clientbank.enums.status.CustomerStatus;
 import org.example.clientbank.model.CreateAccountByIdModel;
-import org.example.clientbank.model.CreateAccountModel;
-import org.example.clientbank.model.DeleteAccountModel;
 import org.example.clientbank.service.CustomerServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,14 +41,6 @@ public class CustomerController {
     public ResponseEntity<Customer> getCustomerById(@PathVariable long id) {
         log.info("Trying to get customer by id");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
-
-        return customerOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/customer")
-    public ResponseEntity<Customer> getCustomerByCustomer(@RequestBody Customer customer) {
-        log.info("Trying to get customer by customer");
-        Optional<Customer> customerOptional = customerService.getCustomerByCustomer(customer);
 
         return customerOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -97,37 +87,11 @@ public class CustomerController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteByCustomer(@RequestBody Customer customer) {
-        log.info("Trying to delete customer by customer");
-
-        boolean deleted = customerService.deleteByCustomer(customer);
-
-        if (deleted) {
-            return ResponseEntity.ok("Customer deleted successfully.");
-        } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
-        }
-    }
-
     @PostMapping("/create_account_by_id")
     public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
         boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
-
-        if (created) {
-            return ResponseEntity.ok("Account created successfully.");
-        } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
-        }
-    }
-
-    @PostMapping("/create_account")
-    public ResponseEntity<String> createAccountByCustomer(@RequestBody CreateAccountModel createAccountModel) {
-        log.info("Trying to create account by customer");
-
-        boolean created = customerService.createAccountByCustomer(createAccountModel.customer(), createAccountModel.currency());
 
         if (created) {
             return ResponseEntity.ok("Account created successfully.");
@@ -147,30 +111,6 @@ public class CustomerController {
             case CARD_NOT_FOUND -> ResponseEntity.badRequest().body("Card not found.");
             default -> ResponseEntity.badRequest().body("Unexpected error occurred.");
         };
-    }
-
-    @DeleteMapping("/delete_account")
-    public ResponseEntity<String> deleteAccountByCustomer(@RequestBody DeleteAccountModel deleteAccountModel) {
-        log.info("Trying to delete account by customer");
-        CustomerStatus status = customerService.deleteAccountByCustomer(deleteAccountModel.customer(), deleteAccountModel.accountNumber());
-
-        return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Account was successfully deleted.");
-            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body("Customer not found.");
-            case CARD_NOT_FOUND -> ResponseEntity.badRequest().body("Account not found.");
-            default -> ResponseEntity.badRequest().body("Unexpected error occurred.");
-        };
-    }
-
-    @DeleteMapping("/delete_accounts")
-    public ResponseEntity<String> deleteAccountsByCustomer(@RequestBody Customer customer) {
-        log.info("Trying to delete all accounts by customer");
-        boolean deleted = customerService.deleteAccountsByCustomer(customer);
-        if (deleted) {
-            return ResponseEntity.ok("All accounts were successfully deleted.");
-        } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
-        }
     }
 
     @DeleteMapping("/delete_accounts_by_id")

@@ -9,15 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
-    boolean deleteByCustomer(Customer customer);
 
     boolean deleteById(long id);
 
     List<Customer> findAll();
 
     Optional<Customer> getCustomerById(long id);
-
-    Optional<Customer> getCustomerByCustomer(Customer customer);
 
     void createCustomer(String name, String email, Integer age);
 
@@ -27,13 +24,7 @@ public interface CustomerService {
 
     boolean deleteAccountsByCustomerId(long id);
 
-    boolean deleteAccountsByCustomer(Customer customer);
-
-    CustomerStatus deleteAccountByCustomer(Customer customer, String accountNumber);
-
     CustomerStatus deleteAccountByCustomerId(long id, String accountNumber);
-
-    boolean createAccountByCustomer(Customer customer, Currency currency);
 
     boolean createAccountByCustomerId(long id, Currency currency);
 
