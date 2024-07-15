@@ -61,16 +61,16 @@ public class CustomerController {
         log.info("Trying to update customer");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Customer not found.");
+            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
         }
 
         CustomerStatus status = customerService.updateCustomer(customerOptional.get(), customerDTO);
 
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Customer updated successfully.");
-            case NOTHING_TO_UPDATE -> ResponseEntity.ok("No changes detected for the customer.");
-            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body("Customer not found.");
-            default -> ResponseEntity.badRequest().body("An unexpected error occurred.");
+            case NOTHING_TO_UPDATE -> ResponseEntity.ok(CustomerStatus.NOTHING_TO_UPDATE.getMessage());
+            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            default -> ResponseEntity.badRequest().body(CustomerStatus.UNEXPECTED.getMessage());
         };
     }
 
@@ -83,7 +83,7 @@ public class CustomerController {
         if (deleted) {
             return ResponseEntity.ok("Customer deleted successfully.");
         } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
+            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
         }
     }
 
@@ -96,7 +96,7 @@ public class CustomerController {
         if (created) {
             return ResponseEntity.ok("Account created successfully.");
         } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
+            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
         }
     }
 
@@ -107,8 +107,8 @@ public class CustomerController {
 
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Account was successfully deleted.");
-            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body("Customer not found.");
-            case CARD_NOT_FOUND -> ResponseEntity.badRequest().body("Card not found.");
+            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            case CARD_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CARD_NOT_FOUND.getMessage());
             default -> ResponseEntity.badRequest().body("Unexpected error occurred.");
         };
     }
@@ -120,7 +120,7 @@ public class CustomerController {
         if (deleted) {
             return ResponseEntity.ok("Accounts deleted successfully for customer with id: " + id);
         } else {
-            return ResponseEntity.badRequest().body("Customer not found.");
+            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
         }
     }
 }

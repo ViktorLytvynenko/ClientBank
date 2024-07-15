@@ -29,7 +29,7 @@ public class AccountController {
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok("Funds add successfully.");
             case ACCOUNT_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body("An unexpected error occurred.");
+            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
         };
     }
 
@@ -42,7 +42,7 @@ public class AccountController {
             case SUCCESS -> ResponseEntity.ok("Funds withdrawn successfully.");
             case INSUFFICIENT_FUNDS -> ResponseEntity.badRequest().body(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
             case ACCOUNT_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body("An unexpected error occurred.");
+            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
         };
     }
 
@@ -55,7 +55,7 @@ public class AccountController {
             case ACCOUNT_FROM_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_FROM_NOT_FOUND.getMessage());
             case ACCOUNT_TO_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_TO_NOT_FOUND.getMessage());
             case INSUFFICIENT_FUNDS -> ResponseEntity.badRequest().body(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
-            default -> ResponseEntity.badRequest().body("An unexpected error occurred.");
+            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
         };
     }
 }
