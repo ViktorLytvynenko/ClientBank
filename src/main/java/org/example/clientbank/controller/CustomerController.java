@@ -7,6 +7,7 @@ import org.example.clientbank.entity.Customer;
 import org.example.clientbank.enums.Currency;
 import org.example.clientbank.enums.status.CustomerStatus;
 import org.example.clientbank.model.CreateAccountByIdModel;
+import org.example.clientbank.model.ResponseMessage;
 import org.example.clientbank.service.CustomerServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,13 +47,13 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCustomer(@RequestParam String name, @RequestParam String email, @RequestParam Integer age) {
+    public ResponseEntity<ResponseMessage> createCustomer(@RequestParam String name, @RequestParam String email, @RequestParam Integer age) {
         log.info("Trying to create new customer");
         try {
             customerService.createCustomer(name, email, age);
-            return ResponseEntity.ok("Customer created successfully.");
+            return ResponseEntity.ok(new ResponseMessage("Customer created successfully."));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to create customer: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessage("Failed to create customer: " + e.getMessage()));
         }
     }
 
