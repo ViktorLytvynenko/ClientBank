@@ -58,70 +58,75 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
         log.info("Trying to update customer");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+
         }
 
         CustomerStatus status = customerService.updateCustomer(customerOptional.get(), customerDTO);
 
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Customer updated successfully.");
-            case NOTHING_TO_UPDATE -> ResponseEntity.ok(CustomerStatus.NOTHING_TO_UPDATE.getMessage());
-            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body(CustomerStatus.UNEXPECTED.getMessage());
+            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Customer updated successfully."));
+            case NOTHING_TO_UPDATE ->
+                    ResponseEntity.ok(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
+            case CUSTOMER_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
         };
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable long id) {
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable long id) {
         log.info("Trying to delete customer by id");
 
         boolean deleted = customerService.deleteById(id);
 
         if (deleted) {
-            return ResponseEntity.ok("Customer deleted successfully.");
+            return ResponseEntity.ok(new ResponseMessage("Customer deleted successfully."));
         } else {
-            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
         }
     }
 
     @PostMapping("/create_account_by_id")
-    public ResponseEntity<String> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
+    public ResponseEntity<ResponseMessage> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
         boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
 
         if (created) {
-            return ResponseEntity.ok("Account created successfully.");
+            return ResponseEntity.ok(new ResponseMessage("Account created successfully."));
         } else {
-            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
         }
     }
 
     @DeleteMapping("/delete_account_by_id")
-    public ResponseEntity<String> deleteAccountByCustomerId(@RequestParam long id, @RequestParam String accountNumber) {
+    public ResponseEntity<ResponseMessage> deleteAccountByCustomerId(@RequestParam long id, @RequestParam String accountNumber) {
         log.info("Trying to delete account by id");
         CustomerStatus status = customerService.deleteAccountByCustomerId(id, accountNumber);
 
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Account was successfully deleted.");
-            case CUSTOMER_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
-            case CARD_NOT_FOUND -> ResponseEntity.badRequest().body(CustomerStatus.CARD_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body("Unexpected error occurred.");
+            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Account was successfully deleted."));
+            case CUSTOMER_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+            case CARD_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CARD_NOT_FOUND.getMessage()));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage("Unexpected error occurred."));
         };
     }
 
     @DeleteMapping("/delete_accounts_by_id")
-    public ResponseEntity<String> deleteAccountsByCustomerId(@RequestParam long id) {
+    public ResponseEntity<ResponseMessage> deleteAccountsByCustomerId(@RequestParam long id) {
         log.info("Trying to delete all accounts by customer id");
         boolean deleted = customerService.deleteAccountsByCustomerId(id);
         if (deleted) {
-            return ResponseEntity.ok("Accounts deleted successfully for customer with id: " + id);
+            return ResponseEntity.ok(new ResponseMessage("Accounts deleted successfully for customer with id: " + id));
         } else {
-            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
         }
     }
 }

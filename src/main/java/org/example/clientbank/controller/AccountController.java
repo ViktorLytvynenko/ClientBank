@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.enums.status.AccountStatus;
 import org.example.clientbank.model.AddWithdrawFundsModel;
+import org.example.clientbank.model.ResponseMessage;
 import org.example.clientbank.model.SendFundsModel;
 import org.example.clientbank.service.AccountServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -22,40 +23,46 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<String> addFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<ResponseMessage> addFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to add funds");
 
         AccountStatus status = accountService.addFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Funds add successfully.");
-            case ACCOUNT_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
+            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds add successfully."));
+            case ACCOUNT_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_NOT_FOUND.getMessage()));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
         };
     }
 
     @PostMapping("/withdraw_funds")
-    public ResponseEntity<String> withdrawFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<ResponseMessage> withdrawFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to withdraw funds");
 
         AccountStatus status = accountService.withdrawFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Funds withdrawn successfully.");
-            case INSUFFICIENT_FUNDS -> ResponseEntity.badRequest().body(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
-            case ACCOUNT_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
-            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
+            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds withdrawn successfully."));
+            case INSUFFICIENT_FUNDS ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.INSUFFICIENT_FUNDS.getMessage()));
+            case ACCOUNT_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_NOT_FOUND.getMessage()));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
         };
     }
 
     @PostMapping("/send_funds")
-    public ResponseEntity<String> sendFunds(@RequestBody SendFundsModel sendFundsModel) {
+    public ResponseEntity<ResponseMessage> sendFunds(@RequestBody SendFundsModel sendFundsModel) {
         log.info("Trying to send funds");
         AccountStatus status = accountService.sendFunds(sendFundsModel.numberFrom(), sendFundsModel.numberTo(), sendFundsModel.sum());
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok("Funds sent successfully.");
-            case ACCOUNT_FROM_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_FROM_NOT_FOUND.getMessage());
-            case ACCOUNT_TO_NOT_FOUND -> ResponseEntity.badRequest().body(AccountStatus.ACCOUNT_TO_NOT_FOUND.getMessage());
-            case INSUFFICIENT_FUNDS -> ResponseEntity.badRequest().body(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
-            default -> ResponseEntity.badRequest().body(AccountStatus.UNEXPECTED.getMessage());
+            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds sent successfully."));
+            case ACCOUNT_FROM_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_FROM_NOT_FOUND.getMessage()));
+            case ACCOUNT_TO_NOT_FOUND ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_TO_NOT_FOUND.getMessage()));
+            case INSUFFICIENT_FUNDS ->
+                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.INSUFFICIENT_FUNDS.getMessage()));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
         };
     }
 }
