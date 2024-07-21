@@ -39,7 +39,6 @@ public class EmployerServiceImpl implements EmployerService {
     @Override
     public EmployerStatus updateEmployer(Employer employer, EmployerDto employerDto) {
         Optional<Employer> employerOptional = getEmployerById(employer.getId());
-        List<Employer> allEmployers = employerRepository.findAll();
 
         if (employerOptional.isPresent()) {
             Employer existingEmployer = employerOptional.get();

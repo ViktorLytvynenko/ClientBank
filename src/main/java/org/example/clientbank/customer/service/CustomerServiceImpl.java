@@ -63,7 +63,6 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public CustomerStatus updateCustomer(Customer customer, CustomerDto customerDTO) {
         Optional<Customer> customerOptional = getCustomerById(customer.getId());
-        List<Customer> allCustomers = customerRepository.findAll();
 
         if (customerOptional.isPresent()) {
             Customer existingCustomer = customerOptional.get();
@@ -71,10 +70,7 @@ public class CustomerServiceImpl implements CustomerService{
             boolean updated = updateCustomerFromDTO(existingCustomer, customerDTO);
 
             if (updated) {
-                int index = allCustomers.indexOf(existingCustomer);
-                if (index != -1) {
-                    allCustomers.set(index, existingCustomer);
-                }
+                customerRepository.save(existingCustomer);
                 return CustomerStatus.SUCCESS;
             } else {
                 return CustomerStatus.NOTHING_TO_UPDATE;
