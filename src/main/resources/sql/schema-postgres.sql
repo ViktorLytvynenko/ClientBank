@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS customers_employers;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS employers;
