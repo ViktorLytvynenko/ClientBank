@@ -1,5 +1,4 @@
--- DROP TABLE IF EXISTS и создание таблиц с правильным порядком
-
+DROP TABLE IF EXISTS customers_employers;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS employers;
@@ -27,6 +26,15 @@ CREATE TABLE accounts
 CREATE TABLE employers
 (
     id      BIGINT AUTO_INCREMENT PRIMARY KEY,
-    address VARCHAR(255) NOT NULL,
-    name    VARCHAR(255) NOT NULL
+    name    VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE customers_employers
+(
+    customer_id BIGINT NOT NULL,
+    employer_id BIGINT NOT NULL,
+    PRIMARY KEY (customer_id, employer_id),
+    FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE,
+    FOREIGN KEY (employer_id) REFERENCES employers (id) ON DELETE CASCADE
 );

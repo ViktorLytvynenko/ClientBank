@@ -29,5 +29,11 @@ create table employers
     name    varchar(255) not null
 );
 
-alter table if exists accounts
-    add constraint FK_account_by_customer foreign key (customer_id) references customers
+CREATE TABLE customers_employers
+(
+    customer_id BIGINT NOT NULL,
+    employer_id BIGINT NOT NULL,
+    PRIMARY KEY (customer_id, employer_id),
+    FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE,
+    FOREIGN KEY (employer_id) REFERENCES employers (id) ON DELETE CASCADE
+);

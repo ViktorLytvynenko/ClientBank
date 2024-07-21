@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.AbstractEntity;
 import org.example.clientbank.account.Account;
+import org.example.clientbank.employer.Employer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,18 @@ public class Customer extends AbstractEntity {
             fetch = FetchType.LAZY)
     List<Account> accounts;
 
+    @ManyToMany(mappedBy = "customers", cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    List<Employer> employers;
+
     public Customer(String name, String email, Integer age) {
         this.name = name;
         this.email = email;
         this.age = age;
         this.accounts = new ArrayList<>();
+        this.employers = new ArrayList<>();
     }
 }
