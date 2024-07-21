@@ -8,7 +8,6 @@ import org.example.clientbank.customer.api.dto.CustomerDto;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
-import org.example.clientbank.customer.mappers.CustomerMapper;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,6 @@ public class CustomerServiceImpl implements CustomerService{
 
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
-    private final CustomerMapper customerMapper;
 
     @Override
     public void deleteById(long id) {
