@@ -35,4 +35,9 @@ public class Employer extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "customer_id")
     )
     List<Customer> customers;
+
+    public Employer(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 }

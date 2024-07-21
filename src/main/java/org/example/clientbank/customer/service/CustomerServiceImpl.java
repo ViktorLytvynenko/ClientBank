@@ -1,13 +1,12 @@
 package org.example.clientbank.customer.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.example.clientbank.account.db.AccountRepository;
-import org.example.clientbank.customer.db.CustomerRepository;
-import org.example.clientbank.customer.api.dto.CustomerDto;
 import org.example.clientbank.account.Account;
-import org.example.clientbank.customer.Customer;
+import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
+import org.example.clientbank.customer.Customer;
+import org.example.clientbank.customer.api.dto.CustomerDto;
+import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class CustomerServiceImpl implements CustomerService{
 
     private final CustomerRepository customerRepository;

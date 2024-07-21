@@ -81,7 +81,7 @@ public class CustomerController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable long id) {
-        log.info("Попытка удаления клиента по id: {}", id);
+        log.info("Trying to delete customer by id: {}", id);
 
         try {
             customerService.deleteById(id);
