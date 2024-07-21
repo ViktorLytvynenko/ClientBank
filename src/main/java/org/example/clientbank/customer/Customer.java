@@ -30,7 +30,10 @@ public class Customer extends AbstractEntity {
     @Column(nullable = false)
     Integer age;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     List<Account> accounts;
 
     public Customer(String name, String email, Integer age) {

@@ -2,7 +2,7 @@ package org.example.clientbank.customer.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.example.clientbank.customer.api.dto.CustomerDTO;
+import org.example.clientbank.customer.api.dto.CustomerDto;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.status.CustomerStatus;
@@ -59,7 +59,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto customerDTO) {
         log.info("Trying to update customer");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {

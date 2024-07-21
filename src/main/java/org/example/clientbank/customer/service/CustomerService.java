@@ -1,7 +1,7 @@
 package org.example.clientbank.customer.service;
 
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.customer.api.dto.CustomerDTO;
+import org.example.clientbank.customer.api.dto.CustomerDto;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.account.enums.Currency;
 
@@ -19,7 +19,7 @@ public interface CustomerService {
 
     void updateCustomer(Customer customer);
 
-    CustomerStatus updateCustomer(Customer customer, CustomerDTO customerDTO);
+    CustomerStatus updateCustomer(Customer customer, CustomerDto customerDTO);
 
     boolean deleteAccountsByCustomerId(long id);
 
@@ -27,5 +27,5 @@ public interface CustomerService {
 
     boolean createAccountByCustomerId(long id, Currency currency);
 
-    boolean updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO);
+    boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO);
 }

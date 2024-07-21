@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.customer.db.CustomerRepository;
-import org.example.clientbank.customer.api.dto.CustomerDTO;
+import org.example.clientbank.customer.api.dto.CustomerDto;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
+import org.example.clientbank.customer.mappers.CustomerMapper;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class CustomerServiceImpl implements CustomerService{
 
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
+    private final CustomerMapper customerMapper;
 
     @Override
     public void deleteById(long id) {
@@ -63,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public CustomerStatus updateCustomer(Customer customer, CustomerDTO customerDTO) {
+    public CustomerStatus updateCustomer(Customer customer, CustomerDto customerDTO) {
         Optional<Customer> customerOptional = getCustomerById(customer.getId());
         List<Customer> allCustomers = customerRepository.findAll();
 
@@ -128,7 +130,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public boolean updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO) {
+    public boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO) {
         if (!customer.getName().equals(customerDTO.getName())
                 || !customer.getEmail().equals(customerDTO.getEmail())
                 || !customer.getAge().equals(customerDTO.getAge())) {
