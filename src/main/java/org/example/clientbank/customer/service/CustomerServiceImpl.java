@@ -17,28 +17,32 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class CustomerServiceImpl{
+public class CustomerServiceImpl implements CustomerService{
 
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
 
-
+    @Override
     public void deleteById(long id) {
         customerRepository.deleteById(id);
     }
 
+    @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
+    @Override
     public Optional<Customer> getCustomerById(long id) {
         return customerRepository.findById(id);
     }
 
+    @Override
     public void createCustomer(String name, String email, Integer age) {
         customerRepository.save(new Customer(name, email, age));
     }
 
+    @Override
     public void updateCustomer(Customer customer) {
         Optional<Customer> customerOptional = getCustomerById(customer.getId());
         List<Customer> allCustomers = customerRepository.findAll();
@@ -58,6 +62,7 @@ public class CustomerServiceImpl{
         }
     }
 
+    @Override
     public CustomerStatus updateCustomer(Customer customer, CustomerDTO customerDTO) {
         Optional<Customer> customerOptional = getCustomerById(customer.getId());
         List<Customer> allCustomers = customerRepository.findAll();
@@ -81,7 +86,7 @@ public class CustomerServiceImpl{
         }
     }
 
-
+    @Override
     public boolean deleteAccountsByCustomerId(long id) {
         Optional<Customer> customerOptional = getCustomerById(id);
         if (customerOptional.isEmpty()) {
@@ -92,6 +97,7 @@ public class CustomerServiceImpl{
         return true;
     }
 
+    @Override
     public CustomerStatus deleteAccountByCustomerId(long id, String accountNumber) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
@@ -106,6 +112,7 @@ public class CustomerServiceImpl{
         }
     }
 
+    @Override
     public boolean createAccountByCustomerId(long id, Currency currency) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
@@ -120,6 +127,7 @@ public class CustomerServiceImpl{
         return true;
     }
 
+    @Override
     public boolean updateCustomerFromDTO(Customer customer, CustomerDTO customerDTO) {
         if (!customer.getName().equals(customerDTO.getName())
                 || !customer.getEmail().equals(customerDTO.getEmail())

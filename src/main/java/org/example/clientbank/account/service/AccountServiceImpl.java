@@ -10,13 +10,15 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class AccountServiceImpl {
+public class AccountServiceImpl implements AccountService{
     private final AccountRepository accountRepository;
 
+    @Override
     public Optional<Account> getAccountByAccountNumber(String number) {
         return accountRepository.findByNumber(number);
     }
 
+    @Override
     public AccountStatus addFunds(String number, double sum) {
         return getAccountByAccountNumber(number).map(a -> {
             a.setBalance(a.getBalance() + sum);
@@ -24,6 +26,7 @@ public class AccountServiceImpl {
         }).orElse(AccountStatus.ACCOUNT_NOT_FOUND);
     }
 
+    @Override
     public AccountStatus withdrawFunds(String number, double sum) {
         return getAccountByAccountNumber(number).map(a -> {
             if (a.getBalance() >= sum) {
@@ -35,6 +38,7 @@ public class AccountServiceImpl {
         }).orElse(AccountStatus.ACCOUNT_NOT_FOUND);
     }
 
+    @Override
     public AccountStatus sendFunds(String numberFrom, String numberTo, double sum) {
 
         Optional<Account> fromAccountOptional = getAccountByAccountNumber(numberFrom);
