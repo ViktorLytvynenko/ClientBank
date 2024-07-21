@@ -47,10 +47,7 @@ public class EmployerServiceImpl implements EmployerService {
             boolean updated = updateEmployerFromDTO(existingEmployer, employerDto);
 
             if (updated) {
-                int index = allEmployers.indexOf(existingEmployer);
-                if (index != -1) {
-                    allEmployers.set(index, existingEmployer);
-                }
+                employerRepository.save(existingEmployer);
                 return EmployerStatus.SUCCESS;
             } else {
                 return EmployerStatus.NOTHING_TO_UPDATE;

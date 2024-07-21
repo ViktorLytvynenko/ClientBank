@@ -9,8 +9,8 @@ values (uuid_generate_v4(), 'USD', 100.0, 1),
 
 INSERT INTO employers (name, address)
 VALUES ('Amazon', 'Seattle, USA'),
-       ('Apple', 'California'),
-       ('Google', 'California');
+       ('Apple', 'California, USA'),
+       ('Google', 'California, USA');
 
 INSERT INTO customers_employers (customer_id, employer_id)
 VALUES (1, 1),
