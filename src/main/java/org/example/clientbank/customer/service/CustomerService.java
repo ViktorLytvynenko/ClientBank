@@ -28,4 +28,8 @@ public interface CustomerService {
     boolean createAccountByCustomerId(long id, Currency currency);
 
     boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO);
+
+    Enum<?> addEmployerToCustomer(long customerId, long employerId);
+
+    Enum<?> removeEmployerFromCustomer(long customerId, long employerId);
 }

@@ -9,6 +9,7 @@ import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.customer.model.CreateAccountByIdModel;
 import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.customer.service.CustomerServiceImpl;
+import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -115,7 +116,7 @@ public class CustomerController {
                     ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
             case CARD_NOT_FOUND ->
                     ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CARD_NOT_FOUND.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage("Unexpected error occurred."));
+            default -> ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
         };
     }
 
@@ -128,5 +129,46 @@ public class CustomerController {
         } else {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
         }
+    }
+
+    @PutMapping("/customer/add_employer")
+    public ResponseEntity<ResponseMessage> addEmployerToCustomer(@RequestParam long customerId,
+                                                                 @RequestParam long employerId) {
+        log.info("Trying to connect customer and employer");
+        Enum<?> status = customerService.addEmployerToCustomer(customerId, employerId);
+
+
+        if (status == CustomerStatus.SUCCESS) {
+            return ResponseEntity.ok(new ResponseMessage(CustomerStatus.SUCCESS.getMessage()));
+        } else if (status == CustomerStatus.CUSTOMER_NOT_FOUND) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+        } else if (status == EmployerStatus.EMPLOYER_NOT_FOUND) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage()));
+        } else if (status == CustomerStatus.NOTHING_TO_UPDATE) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
+        }
+
+        return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
+    }
+
+    @PutMapping("/customer/remove_employer")
+    public ResponseEntity<ResponseMessage> removeEmployerFromCustomer(
+            @RequestParam long customerId,
+            @RequestParam long employerId) {
+
+        log.info("Trying to disconnect employer from customer");
+        Enum<?> status = customerService.removeEmployerFromCustomer(customerId, employerId);
+
+        if (status == CustomerStatus.SUCCESS) {
+            return ResponseEntity.ok(new ResponseMessage(CustomerStatus.SUCCESS.getMessage()));
+        } else if (status == CustomerStatus.CUSTOMER_NOT_FOUND) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+        } else if (status == EmployerStatus.EMPLOYER_NOT_FOUND) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage()));
+        } else if (status == CustomerStatus.NOTHING_TO_UPDATE) {
+            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
+        }
+
+        return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
     }
 }
