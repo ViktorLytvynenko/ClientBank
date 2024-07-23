@@ -1,5 +1,6 @@
 package org.example.clientbank.customer.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.customer.api.dto.CustomerDto;
@@ -60,7 +61,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto customerDTO) {
+    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id,@Valid @RequestBody CustomerDto customerDTO) {
         log.info("Trying to update customer");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
@@ -93,7 +94,7 @@ public class CustomerController {
     }
 
     @PostMapping("/create_account_by_id")
-    public ResponseEntity<ResponseMessage> createAccountByCustomerId(@RequestBody CreateAccountByIdModel createAccountByIdModel) {
+    public ResponseEntity<ResponseMessage> createAccountByCustomerId(@Valid @RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
         boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);

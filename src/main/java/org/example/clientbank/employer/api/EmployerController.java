@@ -1,5 +1,6 @@
 package org.example.clientbank.employer.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.ResponseMessage;
@@ -57,7 +58,7 @@ public class EmployerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateEmployer(@PathVariable Long id, @RequestBody EmployerDto employerDto) {
+    public ResponseEntity<ResponseMessage> updateEmployer(@PathVariable Long id, @Valid @RequestBody EmployerDto employerDto) {
         log.info("Trying to update employer");
         Optional<Employer> employerOptional = employerService.getEmployerById(id);
         if (employerOptional.isEmpty()) {

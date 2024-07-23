@@ -1,5 +1,6 @@
 package org.example.clientbank.account.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.account.status.AccountStatus;
@@ -23,7 +24,7 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<ResponseMessage> addFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<ResponseMessage> addFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to add funds");
 
         AccountStatus status = accountService.addFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
@@ -36,7 +37,7 @@ public class AccountController {
     }
 
     @PostMapping("/withdraw_funds")
-    public ResponseEntity<ResponseMessage> withdrawFunds(@RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<ResponseMessage> withdrawFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to withdraw funds");
 
         AccountStatus status = accountService.withdrawFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
@@ -51,7 +52,7 @@ public class AccountController {
     }
 
     @PostMapping("/send_funds")
-    public ResponseEntity<ResponseMessage> sendFunds(@RequestBody SendFundsModel sendFundsModel) {
+    public ResponseEntity<ResponseMessage> sendFunds(@Valid @RequestBody SendFundsModel sendFundsModel) {
         log.info("Trying to send funds");
         AccountStatus status = accountService.sendFunds(sendFundsModel.numberFrom(), sendFundsModel.numberTo(), sendFundsModel.sum());
         return switch (status) {
