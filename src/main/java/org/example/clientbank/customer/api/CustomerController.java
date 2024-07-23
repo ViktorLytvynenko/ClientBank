@@ -61,7 +61,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id,@Valid @RequestBody CustomerDto customerDTO) {
+    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDto customerDTO) {
         log.info("Trying to update customer");
         Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isEmpty()) {
