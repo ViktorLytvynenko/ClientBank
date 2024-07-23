@@ -2,25 +2,149 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Methods Description</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
             color: #333;
-            font-size: 32px;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        p {
+            margin: 10px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .endpoint {
+            background-color: #f0f0f0;
+            border-left: 3px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-<h1>Welcome to my server!</h1>
+<div class="container">
+    <h1>API Methods Description</h1>
+
+    <h2>CustomerController</h2>
+
+    <div class="endpoint">
+        <h3>GET /api/customers</h3>
+        <p>Fetches all customers from the database. Returns a list of customers if found; otherwise, returns a 404 Not Found status.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>GET /api/customers/customer/{id}</h3>
+        <p>Retrieves a specific customer by their ID. Returns the customer if found; otherwise, returns a 404 Not Found status.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /api/customers/create</h3>
+        <p>Creates a new customer with the specified <code>name</code>, <code>email</code>, and <code>age</code>. Returns a success message if creation is successful; otherwise, returns a failure message.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/customers/update/{id}</h3>
+        <p>Updates an existing customer’s details using the provided <code>CustomerDto</code>. Returns a success message if the update is successful, a message indicating nothing to update if no changes are made, or an error message if the customer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>DELETE /api/customers/delete/{id}</h3>
+        <p>Deletes a customer by their ID. Returns a success message if deletion is successful; otherwise, returns a failure message if the customer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /api/customers/create_account_by_id</h3>
+        <p>Creates an account for a customer based on the provided <code>CreateAccountByIdModel</code> which includes the customer ID and currency. Returns a success message if the account is created; otherwise, returns an error message if the customer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>DELETE /api/customers/delete_account_by_id</h3>
+        <p>Deletes a specific account for a customer identified by ID and account number. Returns a success message if the account is deleted; otherwise, returns an error message if the customer or account is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>DELETE /api/customers/delete_accounts_by_id</h3>
+        <p>Deletes all accounts associated with a customer identified by ID. Returns a success message if all accounts are deleted; otherwise, returns an error message if the customer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/customers/customer/add_employer</h3>
+        <p>Associates an employer with a customer using their IDs. Returns a success message if the association is successful; otherwise, returns an error message if the customer or employer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/customers/customer/remove_employer</h3>
+        <p>Removes an association between a customer and an employer using their IDs. Returns a success message if the removal is successful; otherwise, returns an error message if the customer or employer is not found.</p>
+    </div>
+
+    <h2>AccountController</h2>
+
+    <div class="endpoint">
+        <h3>POST /api/accounts/add_funds</h3>
+        <p>Adds funds to an account identified by the card number. Returns a success message if funds are added successfully; otherwise, returns an error message if the account is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /api/accounts/withdraw_funds</h3>
+        <p>Withdraws funds from an account identified by the card number. Returns a success message if funds are withdrawn successfully; otherwise, returns an error message if there are insufficient funds or the account is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /api/accounts/send_funds</h3>
+        <p>Transfers funds from one account to another. Returns a success message if funds are sent successfully; otherwise, returns an error message if any of the accounts are not found or if there are insufficient funds.</p>
+    </div>
+
+    <h2>EmployerController</h2>
+
+    <div class="endpoint">
+        <h3>GET /api/employers</h3>
+        <p>Fetches all employers from the database. Returns a list of employers if found; otherwise, returns a 404 Not Found status.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>GET /api/employers/employer/{id}</h3>
+        <p>Retrieves a specific employer by their ID. Returns the employer if found; otherwise, returns a 404 Not Found status.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /api/employers/create</h3>
+        <p>Creates a new employer with the specified <code>name</code> and <code>address</code>. Returns a success message if creation is successful; otherwise, returns a failure message.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/employers/update/{id}</h3>
+        <p>Updates an existing employer’s details using the provided <code>EmployerDto</code>. Returns a success message if the update is successful, a message indicating nothing to update if no changes are made, or an error message if the employer is not found.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>DELETE /api/employers/delete/{id}</h3>
+        <p>Deletes an employer by their ID. Returns a success message if deletion is successful; otherwise, returns a failure message if the employer is not found.</p>
+    </div>
+
+</div>
 </body>
 </html>
