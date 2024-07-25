@@ -32,7 +32,7 @@ public interface CustomerMapper {
     @Mapping(source = "phone", target = "phone")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "lastModifiedDate", target = "lastModifiedDate")
-//    @Mapping(source = "accounts", target = "accounts")
-//    @Mapping(source = "employers", target = "employers")
+    @Mapping(source = "accounts", target = "accounts")
+    @Mapping(source = "employers", target = "employers")
     ResponseCustomerAllDataDto customerToCustomerAllDataDto(Customer customer);
 }
