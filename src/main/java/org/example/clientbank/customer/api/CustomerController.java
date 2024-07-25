@@ -42,6 +42,8 @@ public class CustomerController {
         log.info("Trying to get all data about customers");
         List<ResponseCustomerAllDataDto> customers = customerService.findAll()
                 .stream().map(CustomerMapper.INSTANCE::customerToCustomerAllDataDto).toList();
+        log.info("Check" + customers);
+        log.info("Check2" + customerService.findAll());
         if (customers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
