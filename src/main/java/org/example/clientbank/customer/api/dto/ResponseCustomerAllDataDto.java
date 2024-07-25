@@ -23,8 +23,8 @@ public class ResponseCustomerAllDataDto {
     String email;
     Integer age;
     String phone;
-    String createdDate;
-    String lastModifiedDate;
+    LocalDateTime createdDate;
+    LocalDateTime lastModifiedDate;
     List<Account> accounts;
     List<Employer> employers;
 }
