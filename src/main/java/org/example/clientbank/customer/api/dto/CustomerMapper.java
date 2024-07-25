@@ -1,9 +1,11 @@
 package org.example.clientbank.customer.api.dto;
 
 import org.example.clientbank.customer.Customer;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+@Mapper
 public interface CustomerMapper {
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
