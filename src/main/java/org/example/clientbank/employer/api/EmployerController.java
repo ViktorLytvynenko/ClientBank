@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/employers")
+@RequestMapping("/api/v1/employers")
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "http://localhost:3001",

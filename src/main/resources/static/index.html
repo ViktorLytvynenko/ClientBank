@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Methods Description</title>
+    <title>api/v1 Methods Description</title>
     <link rel="stylesheet" href="./styles.css">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
 </head>
 
 <body>
 <div class="container">
-    <h1>API Methods Description</h1>
+    <h1>api/v1 Methods Description</h1>
 
     <h2>Customer</h2>
 
     <div class="endpoint">
-        <h3>GET /api/customers/all_data</h3>
+        <h3>GET /api/v1/customers/all_data</h3>
         <p>Retrieve all data about customers, including associated accounts and employers.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>GET /api/customers/all_data</code></pre>
+            <pre><code>GET /api/v1/customers/all_data</code></pre>
             <h4>Example Response</h4>
             <pre><code>[
   {
@@ -49,11 +49,11 @@
     </div>
 
     <div class="endpoint">
-        <h3>GET /api/customers</h3>
+        <h3>GET /api/v1/customers</h3>
         <p>Fetches all customers from the database. Returns a list of customers if found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>GET /api/customers</code></pre>
+            <pre><code>GET /api/v1/customers</code></pre>
             <h4>Example Response</h4>
             <pre><code>[
   {
@@ -80,11 +80,11 @@
     </div>
 
     <div class="endpoint">
-        <h3>GET /api/customers/customer/{id}</h3>
+        <h3>GET /api/v1/customers/customer/{id}</h3>
         <p>Retrieves a specific customer by their ID. Returns the customer if found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>GET /api/customers/customer/1</code></pre>
+            <pre><code>GET /api/v1/customers/customer/1</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
   "id": 1,
@@ -98,12 +98,12 @@
     </div>
 
     <div class="endpoint">
-        <h3>POST /api/customers/create</h3>
+        <h3>POST /api/v1/customers/create</h3>
         <p>Creates a new customer using the provided <code>CustomerDto</code>. The response will not include the
             password field.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/customers/create
+            <pre><code>POST /api/v1/customers/create
 Content-Type: application/json
 
 {
@@ -128,13 +128,13 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>PUT /api/customers/update/{id}</h3>
+        <h3>PUT /api/v1/customers/update/{id}</h3>
         <p>Updates an existing customer’s details using the provided <code>CustomerDto</code>. Returns a success message
             if the update is successful, a message indicating nothing to update if no changes are made, or an error
             message if the customer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>PUT /api/customers/update/1
+            <pre><code>PUT /api/v1/customers/update/1
 Content-Type: application/json
 
 {
@@ -152,12 +152,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>DELETE /api/customers/delete/{id}</h3>
+        <h3>DELETE /api/v1/customers/delete/{id}</h3>
         <p>Deletes a customer by their ID. Returns a success message if deletion is successful; otherwise, returns a
             failure message if the customer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>DELETE /api/customers/delete/1</code></pre>
+            <pre><code>DELETE /api/v1/customers/delete/1</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
   "message": "Customer deleted successfully"
@@ -166,13 +166,13 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>POST /api/customers/create_account_by_id</h3>
+        <h3>POST /api/v1/customers/create_account_by_id</h3>
         <p>Creates an account for a customer based on the provided <code>CreateAccountByIdModel</code> which includes
             the customer ID and currency. Returns a success message if the account is created; otherwise, returns an
             error message if the customer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/customers/create_account_by_id
+            <pre><code>POST /api/v1/customers/create_account_by_id
 Content-Type: application/json
 
 {
@@ -192,12 +192,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>DELETE /api/customers/delete_account_by_id</h3>
+        <h3>DELETE /api/v1/customers/delete_account_by_id</h3>
         <p>Deletes a specific account for a customer identified by ID and account number. Returns a success message if
             the account is deleted; otherwise, returns an error message if the customer or account is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>DELETE /api/customers/delete_account_by_id
+            <pre><code>DELETE /api/v1/customers/delete_account_by_id
 Content-Type: application/json
 
 {
@@ -212,12 +212,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>DELETE /api/customers/delete_accounts_by_id</h3>
+        <h3>DELETE /api/v1/customers/delete_accounts_by_id</h3>
         <p>Deletes all accounts associated with a customer identified by ID. Returns a success message if all accounts
             are deleted; otherwise, returns an error message if the customer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>DELETE /api/customers/delete_accounts_by_id
+            <pre><code>DELETE /api/v1/customers/delete_accounts_by_id
 Content-Type: application/json
 
 {
@@ -231,12 +231,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>PUT /api/customers/customer/add_employer</h3>
+        <h3>PUT /api/v1/customers/customer/add_employer</h3>
         <p>Associates an employer with a customer using their IDs. Returns a success message if the association is
             successful; otherwise, returns an error message if the customer or employer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>PUT /api/customers/customer/add_employer
+            <pre><code>PUT /api/v1/customers/customer/add_employer
 Content-Type: application/json
 
 {
@@ -251,12 +251,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>PUT /api/customers/customer/remove_employer</h3>
+        <h3>PUT /api/v1/customers/customer/remove_employer</h3>
         <p>Removes an association between a customer and an employer using their IDs. Returns a success message if the
             removal is successful; otherwise, returns an error message if the customer or employer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>PUT /api/customers/customer/remove_employer
+            <pre><code>PUT /api/v1/customers/customer/remove_employer
 Content-Type: application/json
 
 {
@@ -273,12 +273,12 @@ Content-Type: application/json
     <h2>Account</h2>
 
     <div class="endpoint">
-        <h3>POST /api/accounts/add_funds</h3>
+        <h3>POST /api/v1/accounts/add_funds</h3>
         <p>Adds funds to an account identified by the card number. Returns a success message if funds are added
             successfully; otherwise, returns an error message if the account is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/accounts/add_funds
+            <pre><code>POST /api/v1/accounts/add_funds
 Content-Type: application/json
 
 {
@@ -293,13 +293,13 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>POST /api/accounts/withdraw_funds</h3>
+        <h3>POST /api/v1/accounts/withdraw_funds</h3>
         <p>Withdraws funds from an account identified by the card number. Returns a success message if funds are
             withdrawn successfully; otherwise, returns an error message if there are insufficient funds or the account
             is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/accounts/withdraw_funds
+            <pre><code>POST /api/v1/accounts/withdraw_funds
 Content-Type: application/json
 
 {
@@ -314,13 +314,13 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>POST /api/accounts/send_funds</h3>
+        <h3>POST /api/v1/accounts/send_funds</h3>
         <p>Transfers funds from one account to another. Returns a success message if funds are sent successfully;
             otherwise, returns an error message if any of the accounts are not found or if there are insufficient
             funds.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/accounts/send_funds
+            <pre><code>POST /api/v1/accounts/send_funds
 Content-Type: application/json
 
 {
@@ -338,12 +338,12 @@ Content-Type: application/json
     <h2>Employer</h2>
 
     <div class="endpoint">
-        <h3>GET /api/employers</h3>
+        <h3>GET /api/v1/employers</h3>
         <p>Fetches all employers from the database. Returns a list of employers if found; otherwise, returns a 404 Not
             Found status.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>GET /api/employers</code></pre>
+            <pre><code>GET /api/v1/employers</code></pre>
             <h4>Example Response</h4>
             <pre><code>[
   {
@@ -365,12 +365,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>GET /api/employers/employer/{id}</h3>
+        <h3>GET /api/v1/employers/employer/{id}</h3>
         <p>Retrieves a specific employer by their ID. Returns the employer if found; otherwise, returns a 404 Not Found
             status.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>GET /api/employers/employer/1</code></pre>
+            <pre><code>GET /api/v1/employers/employer/1</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
   "id": 1,
@@ -381,12 +381,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>POST /api/employers/create</h3>
+        <h3>POST /api/v1/employers/create</h3>
         <p>Creates a new employer with using the provided <code>EmployerDto</code>.
             Retrieves a specific employer</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>POST /api/employers/create
+            <pre><code>POST /api/v1/employers/create
 Content-Type: application/json
 
 {
@@ -405,13 +405,13 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>PUT /api/employers/update/{id}</h3>
+        <h3>PUT /api/v1/employers/update/{id}</h3>
         <p>Updates an existing employer’s details using the provided <code>EmployerDto</code>. Returns a success message
             if the update is successful, a message indicating nothing to update if no changes are made, or an error
             message if the employer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>PUT /api/employers/update/1
+            <pre><code>PUT /api/v1/employers/update/1
 Content-Type: application/json
 
 {
@@ -426,12 +426,12 @@ Content-Type: application/json
     </div>
 
     <div class="endpoint">
-        <h3>DELETE /api/employers/delete/{id}</h3>
+        <h3>DELETE /api/v1/employers/delete/{id}</h3>
         <p>Deletes an employer by their ID. Returns a success message if deletion is successful; otherwise, returns a
             failure message if the employer is not found.</p>
         <div class="example">
             <h4>Example Request</h4>
-            <pre><code>DELETE /api/employers/delete/1</code></pre>
+            <pre><code>DELETE /api/v1/employers/delete/1</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
   "message": "Employer deleted successfully"
