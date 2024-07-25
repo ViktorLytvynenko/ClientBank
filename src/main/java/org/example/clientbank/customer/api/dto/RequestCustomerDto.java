@@ -1,9 +1,6 @@
 package org.example.clientbank.customer.api.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,16 +16,17 @@ import static lombok.AccessLevel.PRIVATE;
 public class RequestCustomerDto {
 
     @NotBlank(message = "Name must not be blank")
-    @Size(max = 100, message = "Name must not exceed 100 characters")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     String name;
 
     @NotBlank(message = "Email must not be blank")
     @Email(message = "Invalid email format")
+    @Pattern(regexp = "^[\\w+_.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email format")
     @Size(max = 100, message = "Email must not exceed 100 characters")
     String email;
 
     @NotBlank(message = "Age must not be blank")
-    @Min(value = 1, message = "Age must be at least 1")
+    @Min(value = 18, message = "Age must be at least 18")
     @Size(max = 3, message = "Age must not exceed 3 characters")
     Integer age;
 }
