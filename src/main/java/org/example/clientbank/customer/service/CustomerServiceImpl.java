@@ -5,7 +5,9 @@ import org.example.clientbank.account.Account;
 import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.customer.api.dto.CustomerDto;
+import org.example.clientbank.customer.api.dto.CustomerMapper;
+import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +32,10 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
     }
 
-    @Override
-    public List<Customer> findAll() {
-        return customerRepository.findAll();
+    public List<ResponseCustomerDto> findAll() {
+        return customerRepository.findAll().stream()
+                .map(CustomerMapper.INSTANCE::customerToCustomerDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -40,8 +44,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void createCustomer(String name, String email, Integer age) {
-        customerRepository.save(new Customer(name, email, age));
+    public Customer createCustomer(Customer customer) {
+        return customerRepository.save(customer);
     }
 
     @Override
@@ -65,23 +69,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerStatus updateCustomer(Customer customer, CustomerDto customerDTO) {
-        Optional<Customer> customerOptional = getCustomerById(customer.getId());
-
-        if (customerOptional.isPresent()) {
-            Customer existingCustomer = customerOptional.get();
-
-            boolean updated = updateCustomerFromDTO(existingCustomer, customerDTO);
-
-            if (updated) {
-                customerRepository.save(existingCustomer);
-                return CustomerStatus.SUCCESS;
-            } else {
-                return CustomerStatus.NOTHING_TO_UPDATE;
-            }
-        } else {
+    public CustomerStatus updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
+        Optional<Customer> customerOptional = getCustomerById(id);
+        if (customerOptional.isEmpty()) {
             return CustomerStatus.CUSTOMER_NOT_FOUND;
         }
+
+        Customer existingCustomer = customerOptional.get();
+
+        existingCustomer.setName(requestCustomerDto.getName());
+        existingCustomer.setEmail(requestCustomerDto.getEmail());
+        existingCustomer.setAge(requestCustomerDto.getAge());
+
+        customerRepository.save(existingCustomer);
+        return CustomerStatus.SUCCESS;
     }
 
     @Override
@@ -125,18 +126,18 @@ public class CustomerServiceImpl implements CustomerService {
         return true;
     }
 
-    @Override
-    public boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO) {
-        if (!customer.getName().equals(customerDTO.getName())
-                || !customer.getEmail().equals(customerDTO.getEmail())
-                || !customer.getAge().equals(customerDTO.getAge())) {
-            customer.setName(customerDTO.getName());
-            customer.setEmail(customerDTO.getEmail());
-            customer.setAge(customerDTO.getAge());
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO) {
+//        if (!customer.getName().equals(customerDTO.getName())
+//                || !customer.getEmail().equals(customerDTO.getEmail())
+//                || !customer.getAge().equals(customerDTO.getAge())) {
+//            customer.setName(customerDTO.getName());
+//            customer.setEmail(customerDTO.getEmail());
+//            customer.setAge(customerDTO.getAge());
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public Enum<?> addEmployerToCustomer(long customerId, long employerId) {

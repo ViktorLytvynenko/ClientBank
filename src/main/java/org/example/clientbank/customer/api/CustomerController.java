@@ -3,15 +3,18 @@ package org.example.clientbank.customer.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.example.clientbank.customer.api.dto.CustomerDto;
+import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
+import org.example.clientbank.customer.api.dto.CustomerMapper;
+import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.customer.model.CreateAccountByIdModel;
 import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.customer.service.CustomerServiceImpl;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +34,9 @@ public class CustomerController {
     private final CustomerServiceImpl customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> findAll() {
+    public ResponseEntity<List<ResponseCustomerDto>> findAll() {
         log.info("Trying to get all customers");
-        List<Customer> customers = customerService.findAll();
+        List<ResponseCustomerDto> customers = customerService.findAll();
         if (customers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
@@ -42,34 +45,33 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable long id) {
+    public ResponseEntity<?> getCustomerById(@PathVariable long id) {
         log.info("Trying to get customer by id");
-        Optional<Customer> customerOptional = customerService.getCustomerById(id);
-
-        return customerOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ResponseCustomerDto> customerOptional = customerService.getCustomerById(id)
+                .map(CustomerMapper.INSTANCE::customerToCustomerDto);
+        if (customerOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+        }
+        return ResponseEntity.ok(customerOptional.get());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseMessage> createCustomer(@RequestParam String name, @RequestParam String email, @RequestParam Integer age) {
+    public ResponseEntity<?> createCustomer(@RequestBody RequestCustomerDto requestCustomerDto) {
         log.info("Trying to create new customer");
+        Customer customer = CustomerMapper.INSTANCE.customerDtoToCustomer(requestCustomerDto);
         try {
-            customerService.createCustomer(name, email, age);
-            return ResponseEntity.ok(new ResponseMessage("Customer created successfully."));
+            Customer createdCustomer = customerService.createCustomer(customer);
+            return ResponseEntity.ok(CustomerMapper.INSTANCE.customerToCustomerDto(createdCustomer));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseMessage("Failed to create customer: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create customer: " + e.getMessage());
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDto customerDTO) {
+    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @Valid @RequestBody RequestCustomerDto requestCustomerDto) {
         log.info("Trying to update customer");
-        Optional<Customer> customerOptional = customerService.getCustomerById(id);
-        if (customerOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
 
-        }
-
-        CustomerStatus status = customerService.updateCustomer(customerOptional.get(), customerDTO);
+        CustomerStatus status = customerService.updateCustomer(id, requestCustomerDto);
 
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Customer updated successfully."));

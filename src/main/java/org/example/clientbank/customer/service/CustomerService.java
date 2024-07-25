@@ -1,7 +1,8 @@
 package org.example.clientbank.customer.service;
 
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.customer.api.dto.CustomerDto;
+import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.account.enums.Currency;
 
@@ -11,23 +12,21 @@ import java.util.Optional;
 public interface CustomerService {
     void deleteById(long id);
 
-    List<Customer> findAll();
+    List<ResponseCustomerDto> findAll();
 
     Optional<Customer> getCustomerById(long id);
 
-    void createCustomer(String name, String email, Integer age);
+    Customer createCustomer(Customer customer);
 
     void updateCustomer(Customer customer);
 
-    CustomerStatus updateCustomer(Customer customer, CustomerDto customerDTO);
+    CustomerStatus updateCustomer(Long id, RequestCustomerDto requestCustomerDto);
 
     boolean deleteAccountsByCustomerId(long id);
 
     CustomerStatus deleteAccountByCustomerId(long id, String accountNumber);
 
     boolean createAccountByCustomerId(long id, Currency currency);
-
-    boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO);
 
     Enum<?> addEmployerToCustomer(long customerId, long employerId);
 
