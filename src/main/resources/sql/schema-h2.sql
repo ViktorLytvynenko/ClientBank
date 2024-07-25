@@ -7,27 +7,35 @@ DROP TABLE IF EXISTS employers;
 
 CREATE TABLE customers
 (
-    id    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    age   INTEGER      NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name  VARCHAR(255) NOT NULL
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    age                INTEGER                             NOT NULL,
+    email              VARCHAR(255)                        NOT NULL UNIQUE,
+    name               VARCHAR(255)                        NOT NULL,
+    password           VARCHAR(255)                        NOT NULL,
+    phone              VARCHAR(20)                         NOT NULL,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE accounts
 (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    balance     FLOAT        NOT NULL,
-    currency    VARCHAR(3)   NOT NULL CHECK (currency IN ('USD', 'EUR', 'UAH', 'CHF', 'GBP')),
-    number      VARCHAR(255) NOT NULL UNIQUE,
-    customer_id BIGINT,
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    balance            FLOAT                               NOT NULL,
+    currency           VARCHAR(3)                          NOT NULL CHECK (currency IN ('USD', 'EUR', 'UAH', 'CHF', 'GBP')),
+    number             VARCHAR(255)                        NOT NULL UNIQUE,
+    customer_id        BIGINT,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers (id)
 );
 
 CREATE TABLE employers
 (
-    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name    VARCHAR(255) NOT NULL,
-    address VARCHAR(255) NOT NULL
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name               VARCHAR(255)                        NOT NULL,
+    address            VARCHAR(255)                        NOT NULL,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE customers_employers
