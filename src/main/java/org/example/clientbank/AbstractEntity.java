@@ -2,29 +2,32 @@ package org.example.clientbank;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.TemporalType.TIMESTAMP;
+import static lombok.AccessLevel.PROTECTED;
 
 @MappedSuperclass
+@FieldDefaults(level = PROTECTED)
 @Data
 public abstract class AbstractEntity {
 
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    Long id;
 
     @CreatedDate
     @Temporal(TIMESTAMP)
     @Column(updatable = false, nullable = false)
-    protected LocalDateTime createdDate;
+    LocalDateTime createdDate;
 
     @LastModifiedDate
     @Temporal(TIMESTAMP)
     @Column(nullable = false)
-    protected LocalDateTime lastModifiedDate;
+    LocalDateTime lastModifiedDate;
 }
