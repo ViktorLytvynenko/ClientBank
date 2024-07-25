@@ -21,9 +21,10 @@ public abstract class AbstractEntity {
     Long id;
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     LocalDateTime createdDate;
 
     @LastModifiedDate
+    @Column(nullable = false)
     LocalDateTime lastModifiedDate;
 }
