@@ -126,19 +126,6 @@ public class CustomerServiceImpl implements CustomerService {
         return true;
     }
 
-//    @Override
-//    public boolean updateCustomerFromDTO(Customer customer, CustomerDto customerDTO) {
-//        if (!customer.getName().equals(customerDTO.getName())
-//                || !customer.getEmail().equals(customerDTO.getEmail())
-//                || !customer.getAge().equals(customerDTO.getAge())) {
-//            customer.setName(customerDTO.getName());
-//            customer.setEmail(customerDTO.getEmail());
-//            customer.setAge(customerDTO.getAge());
-//            return true;
-//        }
-//        return false;
-//    }
-
     @Override
     public Enum<?> addEmployerToCustomer(long customerId, long employerId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);

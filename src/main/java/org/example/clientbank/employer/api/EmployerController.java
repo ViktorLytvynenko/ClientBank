@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.employer.Employer;
-import org.example.clientbank.employer.api.dto.EmployerDto;
+import org.example.clientbank.employer.api.dto.EmployerMapper;
+import org.example.clientbank.employer.api.dto.RequestEmployerDto;
+import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 import org.example.clientbank.employer.service.EmployerServiceImpl;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +31,9 @@ public class EmployerController {
     private final EmployerServiceImpl employerService;
 
     @GetMapping
-    public ResponseEntity<List<Employer>> findAll() {
+    public ResponseEntity<List<ResponseEmployerDto>> findAll() {
         log.info("Trying to get all employers");
-        List<Employer> employers = employerService.findAll();
+        List<ResponseEmployerDto> employers = employerService.findAll();
         if (employers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
@@ -47,25 +50,26 @@ public class EmployerController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseMessage> createEmployer(@RequestParam String name, @RequestParam String address) {
+    public ResponseEntity<?> createEmployer(@RequestBody RequestEmployerDto requestEmployerDto) {
         log.info("Trying to create new employer");
+        Employer employer = EmployerMapper.INSTANCE.employerDtoToEmployer(requestEmployerDto);
         try {
-            employerService.createEmployer(name, address);
-            return ResponseEntity.ok(new ResponseMessage("Employer created successfully."));
+            Employer createdEmployer = employerService.createEmployer(employer);
+            return ResponseEntity.ok(EmployerMapper.INSTANCE.employerToEmployerDto(createdEmployer));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseMessage("Failed to create employer: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create employer: " + e.getMessage());
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateEmployer(@PathVariable Long id, @Valid @RequestBody EmployerDto employerDto) {
+    public ResponseEntity<ResponseMessage> updateEmployer(@PathVariable Long id, @Valid @RequestBody RequestEmployerDto requestEmployerDto) {
         log.info("Trying to update employer");
         Optional<Employer> employerOptional = employerService.getEmployerById(id);
         if (employerOptional.isEmpty()) {
             return ResponseEntity.badRequest().body(new ResponseMessage(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage()));
         }
 
-        EmployerStatus status = employerService.updateEmployer(employerOptional.get(), employerDto);
+        EmployerStatus status = employerService.updateEmployer(employerOptional.get(), requestEmployerDto);
 
         return switch (status) {
             case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Employer updated successfully."));

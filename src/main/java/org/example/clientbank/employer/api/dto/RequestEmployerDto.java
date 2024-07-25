@@ -14,7 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode
 @AllArgsConstructor
 @Data
-public class EmployerDto {
+public class RequestEmployerDto {
     @NotBlank(message = "Name must not be blank")
     @Size(max = 100, message = "Name must not exceed 100 characters")
     String name;

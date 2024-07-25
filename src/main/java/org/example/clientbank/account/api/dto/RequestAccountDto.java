@@ -4,9 +4,19 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.FieldDefaults;
 import org.example.clientbank.account.enums.Currency;
 
-public class AccountDto {
+import static lombok.AccessLevel.PRIVATE;
+
+@FieldDefaults(level = PRIVATE)
+@EqualsAndHashCode
+@AllArgsConstructor
+@Data
+public class RequestAccountDto {
 
     @NotBlank(message = "Number must not be blank")
     @Size(max = 100, message = "Name must not exceed 100 characters")

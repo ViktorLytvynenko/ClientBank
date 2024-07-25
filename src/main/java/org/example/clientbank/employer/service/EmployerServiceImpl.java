@@ -2,13 +2,16 @@ package org.example.clientbank.employer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.clientbank.employer.Employer;
-import org.example.clientbank.employer.api.dto.EmployerDto;
+import org.example.clientbank.employer.api.dto.EmployerMapper;
+import org.example.clientbank.employer.api.dto.RequestEmployerDto;
+import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 import org.example.clientbank.employer.db.EmployerRepository;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +20,9 @@ public class EmployerServiceImpl implements EmployerService {
     private final EmployerRepository employerRepository;
 
     @Override
-    public List<Employer> findAll() {
-        return employerRepository.findAll();
+    public List<ResponseEmployerDto> findAll() {
+        return employerRepository.findAll().stream().
+                map(EmployerMapper.INSTANCE::employerToEmployerDto).collect(Collectors.toList());
     }
 
     @Override
@@ -27,8 +31,8 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void createEmployer(String name, String address) {
-        employerRepository.save(new Employer(name, address));
+    public Employer createEmployer(Employer employer) {
+        return employerRepository.save(employer);
     }
 
     @Override
@@ -37,13 +41,13 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public EmployerStatus updateEmployer(Employer employer, EmployerDto employerDto) {
+    public EmployerStatus updateEmployer(Employer employer, RequestEmployerDto requestEmployerDto) {
         Optional<Employer> employerOptional = getEmployerById(employer.getId());
 
         if (employerOptional.isPresent()) {
             Employer existingEmployer = employerOptional.get();
 
-            boolean updated = updateEmployerFromDTO(existingEmployer, employerDto);
+            boolean updated = updateEmployerFromDTO(existingEmployer, requestEmployerDto);
 
             if (updated) {
                 employerRepository.save(existingEmployer);
@@ -57,11 +61,11 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public boolean updateEmployerFromDTO(Employer employer, EmployerDto employerDto) {
-        if (!employer.getName().equals(employerDto.getName())
-                || !employer.getAddress().equals(employerDto.getAddress())) {
-            employer.setName(employerDto.getName());
-            employer.setAddress(employerDto.getAddress());
+    public boolean updateEmployerFromDTO(Employer employer, RequestEmployerDto requestEmployerDto) {
+        if (!employer.getName().equals(requestEmployerDto.getName())
+                || !employer.getAddress().equals(requestEmployerDto.getAddress())) {
+            employer.setName(requestEmployerDto.getName());
+            employer.setAddress(requestEmployerDto.getAddress());
             return true;
         }
         return false;
