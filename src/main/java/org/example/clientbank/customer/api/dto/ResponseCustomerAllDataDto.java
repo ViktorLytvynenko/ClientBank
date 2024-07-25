@@ -21,6 +21,7 @@ public class ResponseCustomerAllDataDto {
     String name;
     String email;
     Integer age;
+    String phone;
     List<Account> accounts;
     List<Employer> employers;
 }

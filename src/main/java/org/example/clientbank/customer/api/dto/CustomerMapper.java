@@ -18,15 +18,15 @@ public interface CustomerMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
+    @Mapping(source = "phone", target = "phone")
     ResponseCustomerDto customerToCustomerDto(Customer customer);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
+    @Mapping(source = "phone", target = "phone")
     @Mapping(source = "accounts", target = "accounts")
     @Mapping(source = "employers", target = "employers")
     ResponseCustomerAllDataDto customerToCustomerAllDataDto(Customer customer);
-
-
 }

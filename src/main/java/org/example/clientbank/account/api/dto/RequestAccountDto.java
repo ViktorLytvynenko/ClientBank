@@ -2,6 +2,7 @@ package org.example.clientbank.account.api.dto;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,5 +30,6 @@ public class RequestAccountDto {
 
     @NotBlank(message = "Balance must not be blank")
     @Size(max = 15, message = "Currency must not exceed 15 characters")
+    @DecimalMin(value = "-10000.00", message = "Balance can be negative")
     Double balance;
 }

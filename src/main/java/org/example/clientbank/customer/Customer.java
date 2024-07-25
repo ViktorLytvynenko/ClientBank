@@ -31,6 +31,12 @@ public class Customer extends AbstractEntity {
     @Column(nullable = false)
     Integer age;
 
+    @Column(nullable = false)
+    String password;
+
+    @Column(nullable = false)
+    String phone;
+
     @OneToMany(mappedBy = "customer",
             cascade = CascadeType.REMOVE,
             orphanRemoval = true,

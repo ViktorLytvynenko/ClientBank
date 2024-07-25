@@ -17,4 +17,5 @@ public class ResponseCustomerDto {
     String name;
     String email;
     Integer age;
+    String phone;
 }

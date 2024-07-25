@@ -29,4 +29,12 @@ public class RequestCustomerDto {
     @Min(value = 18, message = "Age must be at least 18")
     @Size(max = 3, message = "Age must not exceed 3 characters")
     Integer age;
+
+    @NotBlank(message = "Phone number must not be blank")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
+    String phone;
+
+    @NotBlank(message = "Password must not be blank")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    String password;
 }

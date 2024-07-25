@@ -1,6 +1,5 @@
 package org.example.clientbank.employer.api.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,12 +14,12 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor
 @Data
 public class RequestEmployerDto {
-    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
-    @Size(max = 100, message = "Name must not exceed 100 characters")
+
+    @NotBlank(message = "Name must not be blank")
+    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     String name;
 
-    @NotBlank(message = "Email must not be blank")
-    @Email(message = "Invalid email format")
-    @Size(max = 100, message = "Email must not exceed 100 characters")
+    @NotBlank(message = "Address must not be blank")
+    @Size(min = 3, max = 100, message = "Address must be between 3 and 100 characters")
     String address;
 }

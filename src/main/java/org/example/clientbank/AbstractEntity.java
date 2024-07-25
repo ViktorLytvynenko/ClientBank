@@ -3,6 +3,10 @@ package org.example.clientbank;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.PUBLIC;
 
@@ -15,4 +19,11 @@ public abstract class AbstractEntity {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @CreatedDate
+    @Column(updatable = false)
+    LocalDateTime createdDate;
+
+    @LastModifiedDate
+    LocalDateTime lastModifiedDate;
 }
