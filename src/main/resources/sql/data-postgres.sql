@@ -11,3 +11,8 @@ INSERT INTO employers (name, address, created_date, last_modified_date)
 VALUES ('Amazon', 'Seattle, USA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Apple', 'California, USA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Google', 'California, USA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO customers_employers (customer_id, employer_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 1);
