@@ -21,6 +21,8 @@ public interface CustomerMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
     @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "createdDate", target = "createdDate")
+    @Mapping(source = "lastModifiedDate", target = "lastModifiedDate")
     ResponseCustomerDto customerToCustomerDto(Customer customer);
 
     @Mapping(source = "id", target = "id")
@@ -28,6 +30,8 @@ public interface CustomerMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
     @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "createdDate", target = "createdDate")
+    @Mapping(source = "lastModifiedDate", target = "lastModifiedDate")
     @Mapping(source = "accounts", target = "accounts")
     @Mapping(source = "employers", target = "employers")
     ResponseCustomerAllDataDto customerToCustomerAllDataDto(Customer customer);
