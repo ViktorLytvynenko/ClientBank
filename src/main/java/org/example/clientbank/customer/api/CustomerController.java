@@ -37,7 +37,8 @@ public class CustomerController {
     @GetMapping("/all_data")
     public ResponseEntity<List<ResponseCustomerAllDataDto>> findAllDataAboutCustomers() {
         log.info("Trying to get all data about customers");
-        List<ResponseCustomerAllDataDto> customers = customerService.findAllDataAboutCustomers();
+        List<ResponseCustomerAllDataDto> customers = customerService.findAll()
+                .stream().map(CustomerMapper.INSTANCE::customerToCustomerAllDataDto).toList();
         if (customers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
@@ -48,7 +49,8 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<List<ResponseCustomerDto>> findAll() {
         log.info("Trying to get all customers");
-        List<ResponseCustomerDto> customers = customerService.findAll();
+        List<ResponseCustomerDto> customers = customerService.findAll().stream()
+                .map(CustomerMapper.INSTANCE::customerToCustomerDto).toList();
         if (customers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {

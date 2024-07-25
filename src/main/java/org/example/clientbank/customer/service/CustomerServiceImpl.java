@@ -5,10 +5,7 @@ import org.example.clientbank.account.Account;
 import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.customer.api.dto.CustomerMapper;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
-import org.example.clientbank.customer.api.dto.ResponseCustomerAllDataDto;
-import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +24,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final AccountRepository accountRepository;
     private final EmployerRepository employerRepository;
 
-    @Override
-    public List<ResponseCustomerAllDataDto> findAllDataAboutCustomers() {
-        return customerRepository.findAll().stream()
-                .map(CustomerMapper.INSTANCE::customerToCustomerAllDataDto)
-                .collect(Collectors.toList());
-    }
 
-    public List<ResponseCustomerDto> findAll() {
-        return customerRepository.findAll().stream()
-                .map(CustomerMapper.INSTANCE::customerToCustomerDto)
-                .collect(Collectors.toList());
+    @Override
+    public List<Customer> findAll() {
+        return customerRepository.findAll();
     }
 
     @Override
