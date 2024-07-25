@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
+import static jakarta.persistence.TemporalType.TIMESTAMP;
 import static lombok.AccessLevel.PUBLIC;
 
 @MappedSuperclass
@@ -21,10 +22,12 @@ public abstract class AbstractEntity {
     Long id;
 
     @CreatedDate
+    @Temporal(TIMESTAMP)
     @Column(updatable = false, nullable = false)
     LocalDateTime createdDate;
 
     @LastModifiedDate
+    @Temporal(TIMESTAMP)
     @Column(nullable = false)
     LocalDateTime lastModifiedDate;
 }
