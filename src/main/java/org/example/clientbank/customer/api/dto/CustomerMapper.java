@@ -12,6 +12,8 @@ public interface CustomerMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "password", target = "password")
     Customer customerDtoToCustomer(RequestCustomerDto requestCustomerDto);
 
     @Mapping(source = "id", target = "id")
