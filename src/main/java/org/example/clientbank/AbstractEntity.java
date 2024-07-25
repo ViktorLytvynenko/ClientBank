@@ -16,7 +16,7 @@ public abstract class AbstractEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @CreatedDate
     @Temporal(TIMESTAMP)
