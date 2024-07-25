@@ -1,5 +1,6 @@
 package org.example.clientbank.customer.service;
 
+import org.example.clientbank.account.Account;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
@@ -26,7 +27,7 @@ public interface CustomerService {
 
     CustomerStatus deleteAccountByCustomerId(long id, String accountNumber);
 
-    boolean createAccountByCustomerId(long id, Currency currency);
+    Account createAccountByCustomerId(long id, Currency currency);
 
     Enum<?> addEmployerToCustomer(long customerId, long employerId);
 

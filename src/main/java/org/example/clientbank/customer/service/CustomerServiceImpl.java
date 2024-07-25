@@ -109,18 +109,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean createAccountByCustomerId(long id, Currency currency) {
+    public Account createAccountByCustomerId(long id, Currency currency) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
         if (customerOptional.isEmpty()) {
-            return false;
+           return null;
         }
 
         Account newAccount = new Account(currency, customerOptional.get());
         customerOptional.get().getAccounts().add(newAccount);
         accountRepository.save(newAccount);
         updateCustomer(customerOptional.get());
-        return true;
+        return newAccount;
     }
 
     @Override

@@ -3,6 +3,9 @@ package org.example.clientbank.customer.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.example.clientbank.account.Account;
+import org.example.clientbank.account.api.dto.AccountMapper;
+import org.example.clientbank.account.api.dto.ResponseAccountDto;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
@@ -110,15 +113,17 @@ public class CustomerController {
     }
 
     @PostMapping("/create_account_by_id")
-    public ResponseEntity<ResponseMessage> createAccountByCustomerId(@Valid @RequestBody CreateAccountByIdModel createAccountByIdModel) {
+    public ResponseEntity<?> createAccountByCustomerId(@Valid @RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
-        boolean created = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
+        Account createdAccount = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
 
-        if (created) {
-            return ResponseEntity.ok(new ResponseMessage("Account created successfully."));
-        } else {
+        if (createdAccount == null) {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+
+        } else {
+            ResponseAccountDto responseAccountDto = AccountMapper.INSTANCE.accountToAccountDto(createdAccount);
+            return ResponseEntity.ok(responseAccountDto);
         }
     }
 
@@ -149,7 +154,7 @@ public class CustomerController {
     }
 
     @PutMapping("/customer/add_employer")
-    public ResponseEntity<ResponseMessage> addEmployerToCustomer(@RequestParam long customerId,
+    public ResponseEntity<?> addEmployerToCustomer(@RequestParam long customerId,
                                                                  @RequestParam long employerId) {
         log.info("Trying to connect customer and employer");
         Enum<?> status = customerService.addEmployerToCustomer(customerId, employerId);
