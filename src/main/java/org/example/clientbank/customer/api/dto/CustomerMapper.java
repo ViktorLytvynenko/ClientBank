@@ -43,16 +43,4 @@ public interface CustomerMapper {
     @Mapping(source = "accounts", target = "accounts")
     @Mapping(source = "employers", target = "employers")
     ResponseCustomerAllDataDto customerToCustomerAllDataDto(Customer customer);
-
-    default List<ResponseAccountDto> mapAccounts(List<Account> accounts) {
-        return accounts.stream()
-                .map(AccountMapper.INSTANCE::accountToAccountDto)
-                .toList();
-    }
-
-    default List<ResponseEmployerDto> mapEmployers(List<Employer> employers) {
-        return employers.stream()
-                .map(EmployerMapper.INSTANCE::employerToEmployerDto)
-                .toList();
-    }
 }
