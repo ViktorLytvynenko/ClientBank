@@ -72,20 +72,35 @@
     <div class="endpoint">
         <h3>GET /api/customers/all_data</h3>
         <p>Retrieve all data about customers, including associated accounts and employers.</p>
-        <pre><code>Response:
-[
-    {
-        "id": "1",
-        "name": "John Doe",
-        "email": "john.doe@example.com",
-        "age": 30,
-        "phone": "+380505555555",
-        "createdDate": "ISO8601 date-time",
-        "lastModifiedDate": "ISO8601 date-time",
-        "accounts": [],
-        "employers": []
-    }
+        <div class="example">
+            <h4>Example Request</h4>
+            <pre><code>GET /api/customers/all_data</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "age": 30,
+    "phone": "+380505555555",
+    "accounts": [],
+    "employers": [],
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "age": 25,
+    "phone": "+380503333333",
+    "accounts": [],
+    "employers": [],
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
+  }
 ]</code></pre>
+        </div>
     </div>
 
     <div class="endpoint">
@@ -102,8 +117,8 @@
     "email": "john.doe@example.com",
     "age": 30,
     "phone": "+380505555555",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
 
   },
   {
@@ -112,8 +127,8 @@
     "email": "jane.smith@example.com",
     "age": 25,
     "phone": "+380503333333",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
   }
 ]</code></pre>
         </div>
@@ -131,8 +146,8 @@
   "name": "John Doe",
   "email": "john.doe@example.com",
   "age": 30,
-  "createdDate": "ISO8601 date-time",
-  "lastModifiedDate": "ISO8601 date-time"
+  "createdDate": "2024-07-25T10:00:00Z",
+  "lastModifiedDate": "2024-07-25T10:00:00Z"
 }</code></pre>
         </div>
     </div>
@@ -159,8 +174,8 @@ Content-Type: application/json
   "age": 30,
   "accounts": [],
   "employers": [],
-  "createdDate": "ISO8601 date-time",
-  "lastModifiedDate": "ISO8601 date-time"
+  "createdDate": "2024-07-25T10:00:00Z",
+  "lastModifiedDate": "2024-07-25T10:00:00Z"
 }</code></pre>
         </div>
     </div>
@@ -221,8 +236,8 @@ Content-Type: application/json
     "accountNumber": "02e56625-bcee-4a0e-8c90-7eddf4a31613",
     "balance": 100,
     "currency": "USD",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
 }</code></pre>
         </div>
     </div>
@@ -386,15 +401,15 @@ Content-Type: application/json
     "id": 1,
     "name": "Tech Solutions",
     "address": "123 Tech Street",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
   },
   {
     "id": 2,
     "name": "Biz Corp",
     "address": "456 Business Road",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
   }
 ]</code></pre>
         </div>
@@ -434,8 +449,8 @@ Content-Type: application/json
     "id": 1,
     "name": "Amazon",
     "address": "USA",
-    "createdDate": "ISO8601 date-time",
-    "lastModifiedDate": "ISO8601 date-time"
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-25T10:00:00Z"
 }</code></pre>
         </div>
     </div>
