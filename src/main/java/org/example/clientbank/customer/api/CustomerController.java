@@ -7,6 +7,7 @@ import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.api.dto.CustomerMapper;
+import org.example.clientbank.customer.api.dto.ResponseCustomerAllDataDto;
 import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.customer.model.CreateAccountByIdModel;
@@ -32,6 +33,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerServiceImpl customerService;
+
+    @GetMapping("/all_data")
+    public ResponseEntity<List<ResponseCustomerAllDataDto>> findAllDataAboutCustomers() {
+        log.info("Trying to get all data about customers");
+        List<ResponseCustomerAllDataDto> customers = customerService.findAllDataAboutCustomers();
+        if (customers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(customers);
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<ResponseCustomerDto>> findAll() {

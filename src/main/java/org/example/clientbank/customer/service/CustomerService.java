@@ -3,6 +3,7 @@ package org.example.clientbank.customer.service;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.ResponseCustomerAllDataDto;
 import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.status.CustomerStatus;
 
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
+    List<ResponseCustomerAllDataDto> findAllDataAboutCustomers();
+
     void deleteById(long id);
 
     List<ResponseCustomerDto> findAll();

@@ -7,6 +7,7 @@ import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.CustomerMapper;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.ResponseCustomerAllDataDto;
 import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
@@ -28,8 +29,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final EmployerRepository employerRepository;
 
     @Override
-    public void deleteById(long id) {
-        customerRepository.deleteById(id);
+    public List<ResponseCustomerAllDataDto> findAllDataAboutCustomers() {
+        return customerRepository.findAll().stream()
+                .map(CustomerMapper.INSTANCE::customerToCustomerAllDataDto)
+                .collect(Collectors.toList());
     }
 
     public List<ResponseCustomerDto> findAll() {
@@ -46,6 +49,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer createCustomer(Customer customer) {
         return customerRepository.save(customer);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        customerRepository.deleteById(id);
     }
 
     @Override
