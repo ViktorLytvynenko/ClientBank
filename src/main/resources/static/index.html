@@ -70,6 +70,25 @@
     <h2>Customer</h2>
 
     <div class="endpoint">
+        <h3>GET /api/customers/all_data</h3>
+        <p>Retrieve all data about customers, including associated accounts and employers.</p>
+        <pre><code>Response:
+[
+    {
+        "id": "1",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "age": 30,
+        "phone": "+380505555555",
+        "createdDate": "ISO8601 date-time",
+        "lastModifiedDate": "ISO8601 date-time",
+        "accounts": [],
+        "employers": []
+    }
+]</code></pre>
+    </div>
+
+    <div class="endpoint">
         <h3>GET /api/customers</h3>
         <p>Fetches all customers from the database. Returns a list of customers if found.</p>
         <div class="example">
@@ -82,16 +101,23 @@
     "name": "John Doe",
     "email": "john.doe@example.com",
     "age": 30,
+    "phone": "string",
     "accounts": [],
-    "employers": []
+    "employers": [],
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
+
   },
   {
     "id": 2,
     "name": "Jane Smith",
     "email": "jane.smith@example.com",
     "age": 25,
+    "phone": "string",
     "accounts": [],
-    "employers": []
+    "employers": [],
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
   }
 ]</code></pre>
         </div>
@@ -110,7 +136,9 @@
   "email": "john.doe@example.com",
   "age": 30,
   "accounts": [],
-    "employers": []
+  "employers": [],
+  "createdDate": "ISO8601 date-time",
+  "lastModifiedDate": "ISO8601 date-time"
 }</code></pre>
         </div>
     </div>
@@ -131,8 +159,14 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Customer created successfully",
-  "customerId": 3
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "age": 30,
+  "accounts": [],
+  "employers": [],
+  "createdDate": "ISO8601 date-time",
+  "lastModifiedDate": "ISO8601 date-time"
 }</code></pre>
         </div>
     </div>
@@ -189,7 +223,12 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Account created successfully"
+    "id": "1",
+    "accountNumber": "string",
+    "balance": "number",
+    "currency": "string",
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
 }</code></pre>
         </div>
     </div>
@@ -352,12 +391,16 @@ Content-Type: application/json
   {
     "id": 1,
     "name": "Tech Solutions",
-    "address": "123 Tech Street"
+    "address": "123 Tech Street",
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
   },
   {
     "id": 2,
     "name": "Biz Corp",
-    "address": "456 Business Road"
+    "address": "456 Business Road",
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
   }
 ]</code></pre>
         </div>
@@ -394,8 +437,11 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Employer created successfully",
-  "employerId": 3
+    "id": 1,
+    "name": "Amazon",
+    "address": "USA",
+    "createdDate": "ISO8601 date-time",
+    "lastModifiedDate": "ISO8601 date-time"
 }</code></pre>
         </div>
     </div>
