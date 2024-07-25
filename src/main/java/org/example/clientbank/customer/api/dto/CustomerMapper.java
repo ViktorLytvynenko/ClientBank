@@ -1,19 +1,9 @@
 package org.example.clientbank.customer.api.dto;
 
-import org.example.clientbank.account.Account;
-import org.example.clientbank.account.api.dto.AccountMapper;
-import org.example.clientbank.account.api.dto.ResponseAccountDto;
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.employer.Employer;
-import org.example.clientbank.employer.api.dto.EmployerMapper;
-import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
-import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
-@Mapper(uses = {AccountMapper.class, EmployerMapper.class})
 public interface CustomerMapper {
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
