@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.employer.Employer;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -22,6 +23,8 @@ public class ResponseCustomerAllDataDto {
     String email;
     Integer age;
     String phone;
+    LocalDateTime createdDate;
+    LocalDateTime lastModifiedDate;
     List<Account> accounts;
     List<Employer> employers;
 }

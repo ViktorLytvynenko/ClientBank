@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -18,4 +20,6 @@ public class ResponseCustomerDto {
     String email;
     Integer age;
     String phone;
+    LocalDateTime createdDate;
+    LocalDateTime lastModifiedDate;
 }
