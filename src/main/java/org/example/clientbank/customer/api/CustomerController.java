@@ -64,7 +64,7 @@ public class CustomerController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/shortened")
     @JsonView(View.Base.class)
     public ResponseEntity<List<ResponseCustomerDto>> findAllShortened() {
         log.info("Trying to get all customers");
