@@ -69,7 +69,7 @@ public class CustomerController {
                                                                      @RequestParam(defaultValue = "10") int perPage,
                                                                      @RequestParam(defaultValue = "id") String sortBy,
                                                                      @RequestParam(defaultValue = "asc") String sortDirection) {
-        log.info("Trying to get all customers");
+        log.info("Trying to get all customers with parameters");
         Sort.Direction direction = Sort.Direction.fromString(sortDirection);
         Pageable pageable = PageRequest.of(startPage, perPage, Sort.by(direction, sortBy));
 

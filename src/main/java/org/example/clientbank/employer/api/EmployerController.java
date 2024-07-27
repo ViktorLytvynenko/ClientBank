@@ -11,6 +11,9 @@ import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 import org.example.clientbank.employer.service.EmployerServiceImpl;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +36,28 @@ public class EmployerController {
     @GetMapping
     public ResponseEntity<List<ResponseEmployerDto>> findAll() {
         log.info("Trying to get all employers");
-        List<ResponseEmployerDto> employers = employerService.findAll();
+        List<ResponseEmployerDto> employers = employerService.findAll().stream()
+                .map(EmployerMapper.INSTANCE::employerToEmployerDto).toList();
+
+        if (employers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(employers);
+        }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ResponseEmployerDto>> findAllFiltered(@RequestParam(defaultValue = "0") int startPage,
+                                                                     @RequestParam(defaultValue = "10") int perPage,
+                                                                     @RequestParam(defaultValue = "id") String sortBy,
+                                                                     @RequestParam(defaultValue = "asc") String sortDirection) {
+        log.info("Trying to get all employers with parameters");
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+        Pageable pageable = PageRequest.of(startPage, perPage, Sort.by(direction, sortBy));
+
+        List<ResponseEmployerDto> employers = employerService.findAllFiltered(pageable).stream()
+                .map(EmployerMapper.INSTANCE::employerToEmployerDto).toList();
+
         if (employers.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {

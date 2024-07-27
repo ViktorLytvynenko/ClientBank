@@ -80,6 +80,63 @@
     </div>
 
     <div class="endpoint">
+        <h3>GET /api/v1/customers/filter</h3>
+        <p>Retrieve a paginated and sorted list of customers.</p>
+        <p><strong>Parameters:</strong></p>
+        <ul>
+            <li><strong>startPage</strong> (optional, default = 0): Specifies the page number to retrieve. Pagination
+                starts from 0.
+            </li>
+            <li><strong>perPage</strong> (optional, default = 10): Specifies the number of customers per page.</li>
+            <li><strong>sortBy</strong> (optional, default = "id"): Specifies the attribute by which to sort the
+                customers.
+            </li>
+            <li><strong>sortDirection</strong> (optional, default = "asc"): Specifies the direction of sorting. It can
+                be either asc for ascending order or desc for descending order.
+            </li>
+        </ul>
+        <div class="example">
+            <h4>Example Request</h4>
+            <pre><code>GET /api/v1/customers/filter?startPage=1&perPage=5&sortBy=name&sortDirection=desc</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>[
+  {
+    "id": 5,
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com",
+    "age": 29,
+    "phone": "+1234567890",
+    "createdDate": "2024-07-26T10:00:00Z",
+    "lastModifiedDate": "2024-07-27T10:00:00Z",
+    "employers": [
+      {
+        "id": 2,
+        "name": "Tech Solutions",
+        "address": "123 Tech Street"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "age": 35,
+    "phone": "+0987654321",
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-26T10:00:00Z",
+    "employers": [
+      {
+        "id": 1,
+        "name": "Business Corp",
+        "address": "456 Business Ave"
+      }
+    ]
+  }
+]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
         <h3>GET /api/v1/customers/customer/{id}</h3>
         <p>Retrieves a specific customer by their ID. Returns the customer if found.</p>
         <div class="example">
@@ -339,8 +396,7 @@ Content-Type: application/json
 
     <div class="endpoint">
         <h3>GET /api/v1/employers</h3>
-        <p>Fetches all employers from the database. Returns a list of employers if found; otherwise, returns a 404 Not
-            Found status.</p>
+        <p>Fetches all employers from the database. Returns a list of employers if found.</p>
         <div class="example">
             <h4>Example Request</h4>
             <pre><code>GET /api/v1/employers</code></pre>
@@ -359,6 +415,45 @@ Content-Type: application/json
     "address": "456 Business Road",
     "createdDate": "2024-07-25T10:00:00Z",
     "lastModifiedDate": "2024-07-25T10:00:00Z"
+  }
+]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <h3>GET /api/v1/employers/filter</h3>
+        <p>Retrieve a paginated and sorted list of employers.</p>
+        <p><strong>Parameters:</strong></p>
+        <ul>
+            <li><strong>startPage</strong> (optional, default = 0): Specifies the page number to retrieve. Pagination
+                starts from 0.
+            </li>
+            <li><strong>perPage</strong> (optional, default = 10): Specifies the number of employers per page.</li>
+            <li><strong>sortBy</strong> (optional, default = "id"): Specifies the attribute by which to sort the
+                employers.
+            </li>
+            <li><strong>sortDirection</strong> (optional, default = "asc"): Specifies the direction of sorting. It can
+                be either asc for ascending order or desc for descending order.
+            </li>
+        </ul>
+        <div class="example">
+            <h4>Example Request</h4>
+            <pre><code>GET /api/v1/employers/filter?startPage=0&perPage=10&sortBy=name&sortDirection=asc</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>[
+  {
+    "id": 1,
+    "name": "Business Corp",
+    "address": "456 Business Ave",
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-26T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Tech Solutions",
+    "address": "123 Tech Street",
+    "createdDate": "2024-07-25T10:00:00Z",
+    "lastModifiedDate": "2024-07-26T10:00:00Z"
   }
 ]</code></pre>
         </div>

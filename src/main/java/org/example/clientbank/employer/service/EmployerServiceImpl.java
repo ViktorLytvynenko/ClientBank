@@ -2,16 +2,15 @@ package org.example.clientbank.employer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.clientbank.employer.Employer;
-import org.example.clientbank.employer.api.dto.EmployerMapper;
 import org.example.clientbank.employer.api.dto.RequestEmployerDto;
-import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 import org.example.clientbank.employer.db.EmployerRepository;
 import org.example.clientbank.employer.status.EmployerStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +19,13 @@ public class EmployerServiceImpl implements EmployerService {
     private final EmployerRepository employerRepository;
 
     @Override
-    public List<ResponseEmployerDto> findAll() {
-        return employerRepository.findAll().stream().
-                map(EmployerMapper.INSTANCE::employerToEmployerDto).collect(Collectors.toList());
+    public List<Employer> findAll() {
+        return employerRepository.findAll();
+    }
+
+    @Override
+    public Page<Employer> findAllFiltered(Pageable pageable) {
+        return null;
     }
 
     @Override
