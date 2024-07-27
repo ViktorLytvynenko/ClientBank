@@ -11,6 +11,8 @@ import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.db.EmployerRepository;
 import org.example.clientbank.employer.status.EmployerStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public Page<Customer> findAllFiltered(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     @Override

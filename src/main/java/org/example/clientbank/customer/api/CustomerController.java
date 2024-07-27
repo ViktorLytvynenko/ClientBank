@@ -18,6 +18,9 @@ import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.customer.service.CustomerServiceImpl;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +64,24 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<ResponseCustomerDto>> findAllFiltered(@RequestParam(defaultValue = "0") int startPage,
+                                                                     @RequestParam(defaultValue = "10") int perPage,
+                                                                     @RequestParam(defaultValue = "id") String sortBy,
+                                                                     @RequestParam(defaultValue = "asc") String sortDirection) {
+        log.info("Trying to get all customers");
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+        Pageable pageable = PageRequest.of(startPage, perPage, Sort.by(direction, sortBy));
+
+        List<ResponseCustomerDto> customers = customerService.findAllFiltered(pageable).stream()
+                .map(CustomerMapper.INSTANCE::customerToCustomerDto).toList();
+        if (customers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(customers);
+        }
+    }
+
     @GetMapping("/customer/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable long id) {
         log.info("Trying to get customer by id");
@@ -73,7 +94,7 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createCustomer(@RequestBody RequestCustomerDto requestCustomerDto) {
+    public ResponseEntity<?> createCustomer(@Valid @RequestBody RequestCustomerDto requestCustomerDto) {
         log.info("Trying to create new customer");
         Customer customer = CustomerMapper.INSTANCE.customerDtoToCustomer(requestCustomerDto);
         try {
@@ -155,7 +176,7 @@ public class CustomerController {
 
     @PutMapping("/customer/add_employer")
     public ResponseEntity<?> addEmployerToCustomer(@RequestParam long customerId,
-                                                                 @RequestParam long employerId) {
+                                                   @RequestParam long employerId) {
         log.info("Trying to connect customer and employer");
         Enum<?> status = customerService.addEmployerToCustomer(customerId, employerId);
 

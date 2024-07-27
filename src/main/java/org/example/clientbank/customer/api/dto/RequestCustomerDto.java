@@ -21,13 +21,12 @@ public class RequestCustomerDto {
 
     @NotBlank(message = "Email must not be blank")
     @Email(message = "Invalid email format")
-    @Pattern(regexp = "^[\\w+_.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email format")
     @Size(max = 100, message = "Email must not exceed 100 characters")
     String email;
 
-    @NotBlank(message = "Age must not be blank")
+    @NotNull(message = "Age must not be blank")
     @Min(value = 18, message = "Age must be at least 18")
-    @Size(max = 3, message = "Age must not exceed 3 characters")
+    @Max(value = 190, message = "Age must not exceed 190")
     Integer age;
 
     @NotBlank(message = "Phone number must not be blank")

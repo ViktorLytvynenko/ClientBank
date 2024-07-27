@@ -16,8 +16,9 @@ public class ClientBankApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        System.out.println("http://localhost:9000");
         System.out.println("http://localhost:9000/h2-console");
-        System.out.println("https://springhw1-f5412575bf3e.herokuapp.com/");
-        System.out.println("https://client-bank-front-end.vercel.app/");
+        System.out.println("https://springhw1-f5412575bf3e.herokuapp.com");
+        System.out.println("https://client-bank-front-end.vercel.app");
     }
 }

@@ -1,6 +1,7 @@
 package org.example.clientbank.account.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record SendFundsModel(
         @NotBlank(message = "Sender account number cannot be blank")
@@ -9,6 +10,6 @@ public record SendFundsModel(
         @NotBlank(message = "Recipient account number cannot be blank")
         String numberTo,
 
-        @NotBlank(message = "Sum cannot be blank")
+        @NotNull(message = "Sum cannot be blank")
         double sum) {
 }
