@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
+import org.example.clientbank.customer.api.dto.validation.ValidPassword;
 
 
 import static lombok.AccessLevel.PRIVATE;
@@ -34,6 +35,6 @@ public class RequestCustomerDto {
     String phone;
 
     @NotBlank(message = "Password must not be blank")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @ValidPassword
     String password;
 }
