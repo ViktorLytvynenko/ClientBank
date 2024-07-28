@@ -39,7 +39,7 @@ public class CustomerController {
     private final CustomerServiceImpl customerService;
 
     @GetMapping("/all_data")
-    @JsonView(View.Admin.class)
+//    @JsonView(View.Admin.class)
     public ResponseEntity<List<ResponseCustomerAllDataDto>> findAllDataAboutCustomers() {
         log.info("Trying to get all data about customers");
         List<ResponseCustomerAllDataDto> customers = customerService.findAll()
