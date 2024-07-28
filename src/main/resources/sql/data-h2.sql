@@ -1,7 +1,7 @@
 INSERT INTO customers (name, email, age, password, phone, created_date, last_modified_date)
-VALUES ('Viktor', 'viktor@gmail.com', 35, 'qwerty', '+1234567890', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Maksim', 'maksim@gmail.com', 34, 'qwerty', '+0987654321', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Dan', 'dan@gmail.com', 35, 'qwerty', '+1122334455', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('Viktor', 'viktor@gmail.com', 35, 'qWerty', '+1234567890', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Maksim', 'maksim@gmail.com', 34, 'qWerty', '+0987654321', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Dan', 'dan@gmail.com', 35, 'qWerty', '+1122334455', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO accounts (number, currency, balance, customer_id, created_date, last_modified_date)
 VALUES ('0123456789', 'USD', 100.0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
