@@ -14,6 +14,7 @@ import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,26 +54,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(Customer customer) {
-        Optional<Customer> customerOptional = getCustomerById(customer.getId());
-        List<Customer> allCustomers = customerRepository.findAll();
-
-        if (customerOptional.isPresent()) {
-            Customer existingCustomer = customerOptional.get();
-
-            existingCustomer.setName(customer.getName());
-            existingCustomer.setEmail(customer.getEmail());
-            existingCustomer.setAge(customer.getAge());
-            existingCustomer.setAccounts(customer.getAccounts());
-
-            int index = allCustomers.indexOf(existingCustomer);
-            if (index != -1) {
-                allCustomers.set(index, existingCustomer);
-            }
-        }
-    }
-
-    @Override
     public CustomerStatus updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
         Optional<Customer> customerOptional = getCustomerById(id);
         if (customerOptional.isEmpty()) {
@@ -90,25 +71,40 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public boolean deleteAccountsByCustomerId(long id) {
         Optional<Customer> customerOptional = getCustomerById(id);
         if (customerOptional.isEmpty()) {
             return false;
         }
-        customerOptional.get().getAccounts().clear();
-        updateCustomer(customerOptional.get());
+
+        Customer customer = customerOptional.get();
+        List<Account> accounts = customer.getAccounts();
+
+        if (!accounts.isEmpty()) {
+            accountRepository.deleteAll(accounts);
+        }
+
+        customer.getAccounts().clear();
+        customerRepository.save(customer);
         return true;
     }
 
     @Override
+    @Transactional
     public CustomerStatus deleteAccountByCustomerId(long id, String accountNumber) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
         if (customerOptional.isEmpty()) {
             return CustomerStatus.CUSTOMER_NOT_FOUND;
         }
-        boolean removed = customerOptional.get().getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
+
+        Customer customer = customerOptional.get();
+
+        boolean removed = customer.getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
         if (removed) {
+            accountRepository.deleteByNumber(accountNumber);
+            customerRepository.save(customer);
             return CustomerStatus.SUCCESS;
         } else {
             return CustomerStatus.CARD_NOT_FOUND;
@@ -116,21 +112,26 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Account createAccountByCustomerId(long id, Currency currency) {
         Optional<Customer> customerOptional = getCustomerById(id);
 
         if (customerOptional.isEmpty()) {
-           return null;
+            return null;
         }
 
-        Account newAccount = new Account(currency, customerOptional.get());
-        customerOptional.get().getAccounts().add(newAccount);
+        Customer customer = customerOptional.get();
+
+        Account newAccount = new Account(currency, customer);
+        customer.getAccounts().add(newAccount);
+
         accountRepository.save(newAccount);
-        updateCustomer(customerOptional.get());
+        customerRepository.save(customer);
         return newAccount;
     }
 
     @Override
+    @Transactional
     public Enum<?> addEmployerToCustomer(long customerId, long employerId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);
@@ -169,6 +170,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Enum<?> removeEmployerFromCustomer(long customerId, long employerId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);

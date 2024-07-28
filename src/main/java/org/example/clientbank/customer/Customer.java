@@ -57,4 +57,14 @@ public class Customer extends AbstractEntity {
         this.accounts = new ArrayList<>();
         this.employers = new ArrayList<>();
     }
+
+    public Customer(String name, String email, Integer age, String password, String phone) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+        this.phone = phone;
+        this.accounts = new ArrayList<>();
+        this.employers = new ArrayList<>();
+    }
 }

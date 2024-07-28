@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.customer.api.dto.validation.ValidPassword;
 
@@ -13,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RequestCustomerDto {
 

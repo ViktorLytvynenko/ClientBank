@@ -23,8 +23,6 @@ public interface CustomerService {
 
     Customer createCustomer(Customer customer);
 
-    void updateCustomer(Customer customer);
-
     CustomerStatus updateCustomer(Long id, RequestCustomerDto requestCustomerDto);
 
     boolean deleteAccountsByCustomerId(long id);
