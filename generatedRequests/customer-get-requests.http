@@ -1,0 +1,29 @@
+### GET request to example server
+GET https://springhw1-f5412575bf3e.herokuapp.com/api/v1/customers/all_data
+
+### GET request to example server
+GET http://localhost:9000/api/v1/customers/all_data
+
+### GET request to example server for all customers
+GET https://springhw1-f5412575bf3e.herokuapp.com/api/v1/customers
+
+### GET request to example server for all customers
+GET http://localhost:9000/api/v1/customers
+
+### GET request to example server for all customers short version
+GET https://springhw1-f5412575bf3e.herokuapp.com/api/v1/customers/shortened
+
+### GET request to example server for all customers short version
+GET http://localhost:9000/api/v1/customers/shortened
+
+### GET request to example server with filtering
+GET https://springhw1-f5412575bf3e.herokuapp.com/api/v1/customers/filter?startPage=0&perPage=5&sortBy=id&sortDirection=asc
+
+### GET request to example server with filtering
+GET http://localhost:9000/api/v1/customers/filter?startPage=0&perPage=5&sortBy=id&sortDirection=asc
+
+### GET request to example server for customer by ID
+GET https://springhw1-f5412575bf3e.herokuapp.com/api/v1/customers/customer/1
+
+### GET request to example server for customer by ID
+GET http://localhost:9000/api/v1/customers/customer/1
