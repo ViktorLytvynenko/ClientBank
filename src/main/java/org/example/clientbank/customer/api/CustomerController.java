@@ -68,7 +68,7 @@ public class CustomerController {
     @GetMapping("/shortened")
     @JsonView(View.Base.class)
     public ResponseEntity<List<ResponseCustomerDto>> findAllShortened() {
-        log.info("Trying to get all customers");
+        log.info("Trying to get all customers. Short version");
         List<ResponseCustomerDto> customers = customerService.findAll().stream()
                 .map(CustomerMapper.INSTANCE::customerToCustomerDto).toList();
         if (customers.isEmpty()) {
@@ -240,7 +240,7 @@ public class CustomerController {
             return ResponseEntity.ok(baseResponseDto);
         } else {
             baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
-            return ResponseEntity.ok(baseResponseDto);
+            return ResponseEntity.badRequest().body(baseResponseDto);
         }
     }
 
