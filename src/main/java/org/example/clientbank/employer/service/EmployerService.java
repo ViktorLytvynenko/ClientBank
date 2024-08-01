@@ -2,7 +2,7 @@ package org.example.clientbank.employer.service;
 
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.api.dto.RequestEmployerDto;
-import org.example.clientbank.employer.status.EmployerStatus;
+import org.example.clientbank.employer.api.dto.RequestPatchEmployerDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,7 +21,7 @@ public interface EmployerService {
 
     void deleteById(Long id);
 
-    EmployerStatus updateEmployer(Employer employer, RequestEmployerDto requestEmployerDto);
+    Optional<Employer> updateEmployer(Long id, RequestEmployerDto requestEmployerDto);
 
-    boolean updateEmployerFromDTO(Employer employer, RequestEmployerDto requestEmployerDto);
+    Optional<Employer> patchEmployer(Long id, RequestPatchEmployerDto requestPatchEmployerDto) throws IllegalAccessException;
 }

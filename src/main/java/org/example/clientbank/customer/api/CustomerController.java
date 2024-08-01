@@ -7,19 +7,20 @@ import lombok.extern.log4j.Log4j2;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.account.api.dto.AccountMapper;
 import org.example.clientbank.account.api.dto.ResponseAccountDto;
-import org.example.clientbank.customer.api.dto.*;
-import org.example.clientbank.customer.Customer;
 import org.example.clientbank.account.enums.Currency;
-import org.example.clientbank.customer.status.CustomerStatus;
+import org.example.clientbank.account.status.AccountStatus;
+import org.example.clientbank.customer.Customer;
+import org.example.clientbank.customer.api.dto.*;
 import org.example.clientbank.customer.model.CreateAccountByIdModel;
-import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.customer.service.CustomerServiceImpl;
+import org.example.clientbank.customer.status.CustomerStatus;
+import org.example.clientbank.dto.BaseResponseDto;
+import org.example.clientbank.dto.ResponseMessage;
 import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,101 +99,154 @@ public class CustomerController {
 
     @GetMapping("/customer/{id}")
     @JsonView(View.Admin.class)
-    public ResponseEntity<?> getCustomerById(@PathVariable long id) {
+    public ResponseEntity<Optional<ResponseCustomerDto>> getCustomerById(@PathVariable long id) {
         log.info("Trying to get customer by id");
         Optional<ResponseCustomerDto> customerOptional = customerService.getCustomerById(id)
                 .map(CustomerMapper.INSTANCE::customerToCustomerDto);
+
         if (customerOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(customerOptional.get());
+        return ResponseEntity.ok(customerOptional);
     }
 
     @PostMapping("/create")
     @JsonView(View.Admin.class)
-    public ResponseEntity<?> createCustomer(@Valid @RequestBody RequestCustomerDto requestCustomerDto) {
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> createCustomer(@Valid @RequestBody RequestCustomerDto requestCustomerDto) {
         log.info("Trying to create new customer");
+
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
         Customer customer = CustomerMapper.INSTANCE.customerDtoToCustomer(requestCustomerDto);
         try {
             Customer createdCustomer = customerService.createCustomer(customer);
-            return ResponseEntity.ok(CustomerMapper.INSTANCE.customerToCustomerDto(createdCustomer));
+            baseResponseDto.setDto(CustomerMapper.INSTANCE.customerToCustomerDto(createdCustomer));
+            baseResponseDto.setMessage(CustomerStatus.SUCCESS.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create customer: " + e.getMessage());
+            baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
+            return ResponseEntity.badRequest().body(baseResponseDto);
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseMessage> updateCustomer(@PathVariable Long id, @Valid @RequestBody RequestCustomerDto requestCustomerDto) {
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> updateCustomer(@PathVariable Long id, @Valid @RequestBody RequestCustomerDto requestCustomerDto) {
         log.info("Trying to update customer");
 
-        CustomerStatus status = customerService.updateCustomer(id, requestCustomerDto);
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
+        Optional<Customer> customerOptional = customerService.updateCustomer(id, requestCustomerDto);
 
-        return switch (status) {
-            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Customer updated successfully."));
-            case NOTHING_TO_UPDATE ->
-                    ResponseEntity.ok(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
-            case CUSTOMER_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
-        };
+        if (customerOptional.isPresent()) {
+            Customer updatedCustomer = customerOptional.get();
+            ResponseCustomerDto responseCustomerDto = CustomerMapper.INSTANCE.customerToCustomerDto(updatedCustomer);
+            baseResponseDto.setDto(responseCustomerDto);
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_UPDATED.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
+        } else {
+            baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
+            return ResponseEntity.badRequest().body(baseResponseDto);
+        }
+    }
+
+    @PatchMapping("/patch/{id}")
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> patchCustomer(@PathVariable Long id, @Valid @RequestBody RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException {
+        log.info("Trying to patch customer");
+
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
+        Optional<Customer> customerOptional = customerService.patchCustomer(id, requestPatchCustomerDto);
+
+        if (customerOptional.isPresent()) {
+            Customer updatedCustomer = customerOptional.get();
+            ResponseCustomerDto responseCustomerDto = CustomerMapper.INSTANCE.customerToCustomerDto(updatedCustomer);
+            baseResponseDto.setDto(responseCustomerDto);
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_UPDATED.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
+        } else {
+            baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
+            return ResponseEntity.badRequest().body(baseResponseDto);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseMessage> deleteById(@PathVariable long id) {
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> deleteById(@PathVariable long id) {
         log.info("Trying to delete customer by id: {}", id);
+
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
 
         try {
             customerService.deleteById(id);
-            return ResponseEntity.ok(new ResponseMessage("Customer deleted successfully."));
+            baseResponseDto.setMessage(CustomerStatus.DELETED.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(baseResponseDto);
         }
     }
 
     @PostMapping("/create_account_by_id")
-    public ResponseEntity<?> createAccountByCustomerId(@Valid @RequestBody CreateAccountByIdModel createAccountByIdModel) {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> createAccountByCustomerId(@Valid @RequestBody CreateAccountByIdModel createAccountByIdModel) {
         log.info("Trying to create account by customer id");
+
+        BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
         Currency currency = Currency.valueOf(createAccountByIdModel.currency());
         Account createdAccount = customerService.createAccountByCustomerId(createAccountByIdModel.id(), currency);
 
         if (createdAccount == null) {
-            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.badRequest().body(baseResponseDto);
 
         } else {
             ResponseAccountDto responseAccountDto = AccountMapper.INSTANCE.accountToAccountDto(createdAccount);
-            return ResponseEntity.ok(responseAccountDto);
+            baseResponseDto.setDto(responseAccountDto);
+            baseResponseDto.setMessage(AccountStatus.ACCOUNT_CREATED.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
         }
     }
 
     @DeleteMapping("/delete_account_by_id")
-    public ResponseEntity<ResponseMessage> deleteAccountByCustomerId(@RequestParam long id, @RequestParam String accountNumber) {
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> deleteAccountByCustomerId(@RequestParam long id, @RequestParam String accountNumber) {
         log.info("Trying to delete account by id");
+
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
         CustomerStatus status = customerService.deleteAccountByCustomerId(id, accountNumber);
 
         return switch (status) {
-            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Account was successfully deleted."));
-            case CUSTOMER_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
-            case CARD_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CARD_NOT_FOUND.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.UNEXPECTED.getMessage()));
+            case SUCCESS -> {
+                baseResponseDto.setMessage(AccountStatus.ACCOUNT_DELETED.getMessage());
+                yield ResponseEntity.ok(baseResponseDto);
+            }
+            case CUSTOMER_NOT_FOUND -> {
+                baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+                yield ResponseEntity.badRequest().body(baseResponseDto);
+            }
+            case CARD_NOT_FOUND -> {
+                baseResponseDto.setMessage(CustomerStatus.CARD_NOT_FOUND.getMessage());
+                yield ResponseEntity.badRequest().body(baseResponseDto);
+            }
+            default -> {
+                baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
+                yield ResponseEntity.badRequest().body(baseResponseDto);
+            }
         };
     }
 
     @DeleteMapping("/delete_accounts_by_id")
-    public ResponseEntity<ResponseMessage> deleteAccountsByCustomerId(@RequestParam long id) {
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> deleteAccountsByCustomerId(@RequestParam long id) {
         log.info("Trying to delete all accounts by customer id");
+
+        BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
         boolean deleted = customerService.deleteAccountsByCustomerId(id);
         if (deleted) {
-            return ResponseEntity.ok(new ResponseMessage("Accounts deleted successfully for customer with id: " + id));
+            baseResponseDto.setMessage(AccountStatus.ACCOUNTS_DELETED.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
         } else {
-            return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.ok(baseResponseDto);
         }
     }
 
     @PutMapping("/customer/add_employer")
     public ResponseEntity<ResponseMessage> addEmployerToCustomer(@RequestParam long customerId,
-                                                   @RequestParam long employerId) {
+                                                                 @RequestParam long employerId) {
         log.info("Trying to connect customer and employer");
         Enum<?> status = customerService.addEmployerToCustomer(customerId, employerId);
 

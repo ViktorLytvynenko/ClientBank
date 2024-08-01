@@ -6,16 +6,19 @@ import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.RequestPatchCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.db.EmployerRepository;
 import org.example.clientbank.employer.status.EmployerStatus;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,24 +53,58 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteById(long id) {
+        boolean exists = customerRepository.existsById(id);
+        if (!exists) {
+            throw new EmptyResultDataAccessException("Customer not found with id: " + id, 1);
+        }
         customerRepository.deleteById(id);
     }
 
     @Override
-    public CustomerStatus updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
+    public Optional<Customer> updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
         Optional<Customer> customerOptional = getCustomerById(id);
         if (customerOptional.isEmpty()) {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
+            return Optional.empty();
         }
 
-        Customer existingCustomer = customerOptional.get();
+        customerOptional.get().setName(requestCustomerDto.getName());
+        customerOptional.get().setEmail(requestCustomerDto.getEmail());
+        customerOptional.get().setAge(requestCustomerDto.getAge());
 
-        existingCustomer.setName(requestCustomerDto.getName());
-        existingCustomer.setEmail(requestCustomerDto.getEmail());
-        existingCustomer.setAge(requestCustomerDto.getAge());
+        customerRepository.save(customerOptional.get());
+        return customerOptional;
+    }
 
-        customerRepository.save(existingCustomer);
-        return CustomerStatus.SUCCESS;
+    @Override
+    public Optional<Customer> patchCustomer(Long id, RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException {
+        Optional<Customer> customerOptional = getCustomerById(id);
+        if (customerOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Field[] dtoFields = RequestPatchCustomerDto.class.getDeclaredFields();
+        Field[] entityFields = Customer.class.getDeclaredFields();
+
+        for (Field dtoField : dtoFields) {
+            dtoField.setAccessible(true);
+            Object value = dtoField.get(requestPatchCustomerDto);
+            if (value != null) {
+                String fieldName = dtoField.getName();
+
+                for (Field entityField : entityFields) {
+                    if (entityField.getName().equals(fieldName) && entityField.getType().equals(dtoField.getType())) {
+                        entityField.setAccessible(true);
+                        entityField.set(customerOptional.get(), value);
+                        entityField.setAccessible(false);
+                        break;
+                    }
+                }
+            }
+            dtoField.setAccessible(false);
+        }
+
+        customerRepository.save(customerOptional.get());
+        return customerOptional;
     }
 
     @Override

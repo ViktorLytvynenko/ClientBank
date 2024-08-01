@@ -3,13 +3,18 @@ package org.example.clientbank.account.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.example.clientbank.account.status.AccountStatus;
+import org.example.clientbank.account.Account;
+import org.example.clientbank.account.api.dto.AccountMapper;
+import org.example.clientbank.account.api.dto.ResponseAccountDto;
 import org.example.clientbank.account.model.AddWithdrawFundsModel;
-import org.example.clientbank.ResponseMessage;
 import org.example.clientbank.account.model.SendFundsModel;
 import org.example.clientbank.account.service.AccountServiceImpl;
+import org.example.clientbank.account.status.AccountStatus;
+import org.example.clientbank.dto.BaseResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.security.auth.login.AccountNotFoundException;
 
 @Log4j2
 @RestController
@@ -24,46 +29,41 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<ResponseMessage> addFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> addFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) throws AccountNotFoundException {
         log.info("Trying to add funds");
 
-        AccountStatus status = accountService.addFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
-        return switch (status) {
-            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds add successfully."));
-            case ACCOUNT_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_NOT_FOUND.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
-        };
+        BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
+        Account account = accountService.addFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
+
+        ResponseAccountDto responseAccountDto = AccountMapper.INSTANCE.accountToAccountDto(account);
+        baseResponseDto.setDto(responseAccountDto);
+        baseResponseDto.setMessage(AccountStatus.ADDED_FUNDS.getMessage());
+        return ResponseEntity.ok(baseResponseDto);
     }
 
     @PostMapping("/withdraw_funds")
-    public ResponseEntity<ResponseMessage> withdrawFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> withdrawFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) throws AccountNotFoundException {
         log.info("Trying to withdraw funds");
 
-        AccountStatus status = accountService.withdrawFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
-        return switch (status) {
-            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds withdrawn successfully."));
-            case INSUFFICIENT_FUNDS ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.INSUFFICIENT_FUNDS.getMessage()));
-            case ACCOUNT_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_NOT_FOUND.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
-        };
+        BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
+        Account account = accountService.withdrawFunds(addWithdrawFundsModel.cardNumber(), addWithdrawFundsModel.sum());
+
+        ResponseAccountDto responseAccountDto = AccountMapper.INSTANCE.accountToAccountDto(account);
+        baseResponseDto.setDto(responseAccountDto);
+        baseResponseDto.setMessage(AccountStatus.WITHDRAW_FUNDS.getMessage());
+        return ResponseEntity.ok(baseResponseDto);
     }
 
     @PostMapping("/send_funds")
-    public ResponseEntity<ResponseMessage> sendFunds(@Valid @RequestBody SendFundsModel sendFundsModel) {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> sendFunds(@Valid @RequestBody SendFundsModel sendFundsModel) throws AccountNotFoundException {
         log.info("Trying to send funds");
-        AccountStatus status = accountService.sendFunds(sendFundsModel.numberFrom(), sendFundsModel.numberTo(), sendFundsModel.sum());
-        return switch (status) {
-            case SUCCESS -> ResponseEntity.ok(new ResponseMessage("Funds sent successfully."));
-            case ACCOUNT_FROM_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_FROM_NOT_FOUND.getMessage()));
-            case ACCOUNT_TO_NOT_FOUND ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.ACCOUNT_TO_NOT_FOUND.getMessage()));
-            case INSUFFICIENT_FUNDS ->
-                    ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.INSUFFICIENT_FUNDS.getMessage()));
-            default -> ResponseEntity.badRequest().body(new ResponseMessage(AccountStatus.UNEXPECTED.getMessage()));
-        };
+
+        BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
+        Account account = accountService.sendFunds(sendFundsModel.numberFrom(), sendFundsModel.numberTo(), sendFundsModel.sum());
+
+        ResponseAccountDto responseAccountDto = AccountMapper.INSTANCE.accountToAccountDto(account);
+        baseResponseDto.setDto(responseAccountDto);
+        baseResponseDto.setMessage(AccountStatus.SEND_FUNDS.getMessage());
+        return ResponseEntity.ok(baseResponseDto);
     }
 }

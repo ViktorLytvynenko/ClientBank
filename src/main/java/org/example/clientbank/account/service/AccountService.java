@@ -1,16 +1,16 @@
 package org.example.clientbank.account.service;
 
 import org.example.clientbank.account.Account;
-import org.example.clientbank.account.status.AccountStatus;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.Optional;
 
 public interface AccountService {
     Optional<Account> getAccountByAccountNumber(String number);
 
-    AccountStatus addFunds(String number, double sum);
+    Account addFunds(String number, double sum) throws AccountNotFoundException;
 
-    AccountStatus withdrawFunds(String number, double sum);
+    Account withdrawFunds(String number, double sum) throws AccountNotFoundException;
 
-    AccountStatus sendFunds(String numberFrom, String numberTo, double sum);
+    Account sendFunds(String numberFrom, String numberTo, double sum) throws AccountNotFoundException;
 }

@@ -6,15 +6,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.customer.api.dto.View;
+import org.example.clientbank.dto.AbstractDto;
 
 import static lombok.AccessLevel.PRIVATE;
 
 
 @FieldDefaults(level = PRIVATE)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @Data
-public class ResponseAccountDto {
+public class ResponseAccountDto extends AbstractDto {
 
     @JsonView(View.Admin.class)
     Long id;

@@ -9,6 +9,8 @@ public enum CustomerStatus {
     SUCCESS("Success operation."),
     CUSTOMER_NOT_FOUND("Customer not found."),
     NOTHING_TO_UPDATE("No changes detected for the customer."),
+    CUSTOMER_UPDATED("Customer was successfully updated."),
+    DELETED("Customer was successfully deleted."),
     CARD_NOT_FOUND("Card not found"),
     WRONG_CURRENCY("Wrong currency"),
     UNEXPECTED("An unexpected error occurred.");

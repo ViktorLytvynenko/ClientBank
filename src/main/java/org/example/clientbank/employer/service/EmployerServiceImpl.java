@@ -3,12 +3,13 @@ package org.example.clientbank.employer.service;
 import lombok.RequiredArgsConstructor;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.api.dto.RequestEmployerDto;
+import org.example.clientbank.employer.api.dto.RequestPatchEmployerDto;
 import org.example.clientbank.employer.db.EmployerRepository;
-import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public Page<Employer> findAllFiltered(Pageable pageable) {
-        return null;
+        return employerRepository.findAll(pageable);
     }
 
     @Override
@@ -44,33 +45,49 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public EmployerStatus updateEmployer(Employer employer, RequestEmployerDto requestEmployerDto) {
-        Optional<Employer> employerOptional = getEmployerById(employer.getId());
+    public Optional<Employer> updateEmployer(Long id, RequestEmployerDto requestEmployerDto) {
+        Optional<Employer> employerOptional = getEmployerById(id);
 
-        if (employerOptional.isPresent()) {
-            Employer existingEmployer = employerOptional.get();
-
-            boolean updated = updateEmployerFromDTO(existingEmployer, requestEmployerDto);
-
-            if (updated) {
-                employerRepository.save(existingEmployer);
-                return EmployerStatus.SUCCESS;
-            } else {
-                return EmployerStatus.NOTHING_TO_UPDATE;
-            }
-        } else {
-            return EmployerStatus.EMPLOYER_NOT_FOUND;
+        if (employerOptional.isEmpty()) {
+            return Optional.empty();
         }
+
+        employerOptional.get().setName(requestEmployerDto.getName());
+        employerOptional.get().setAddress(requestEmployerDto.getAddress());
+
+        employerRepository.save(employerOptional.get());
+        return employerOptional;
     }
 
     @Override
-    public boolean updateEmployerFromDTO(Employer employer, RequestEmployerDto requestEmployerDto) {
-        if (!employer.getName().equals(requestEmployerDto.getName())
-                || !employer.getAddress().equals(requestEmployerDto.getAddress())) {
-            employer.setName(requestEmployerDto.getName());
-            employer.setAddress(requestEmployerDto.getAddress());
-            return true;
+    public Optional<Employer> patchEmployer(Long id, RequestPatchEmployerDto requestPatchEmployerDto) throws IllegalAccessException {
+        Optional<Employer> employerOptional = getEmployerById(id);
+        if (employerOptional.isEmpty()) {
+            return Optional.empty();
         }
-        return false;
+
+        Field[] dtoFields = RequestPatchEmployerDto.class.getDeclaredFields();
+        Field[] entityFields = Employer.class.getDeclaredFields();
+
+        for (Field dtoField : dtoFields) {
+            dtoField.setAccessible(true);
+            Object value = dtoField.get(requestPatchEmployerDto);
+            if (value != null) {
+                String fieldName = dtoField.getName();
+
+                for (Field entityField : entityFields) {
+                    if (entityField.getName().equals(fieldName) && entityField.getType().equals(dtoField.getType())) {
+                        entityField.setAccessible(true);
+                        entityField.set(employerOptional.get(), value);
+                        entityField.setAccessible(false);
+                        break;
+                    }
+                }
+            }
+            dtoField.setAccessible(false);
+        }
+
+        employerRepository.save(employerOptional.get());
+        return employerOptional;
     }
 }
