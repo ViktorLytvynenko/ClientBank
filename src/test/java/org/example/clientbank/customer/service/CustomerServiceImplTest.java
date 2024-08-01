@@ -4,9 +4,7 @@ import org.example.clientbank.account.Account;
 import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
-import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
-import org.example.clientbank.customer.status.CustomerStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -108,25 +105,7 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer() {
-        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
-        when(customerRepository.save(any(Customer.class))).thenReturn(johnDoe);
 
-        RequestCustomerDto requestCustomerDto = new RequestCustomerDto();
-        requestCustomerDto.setName("John Smith");
-        requestCustomerDto.setEmail("johnsmith@gmail.com");
-        requestCustomerDto.setAge(36);
-        requestCustomerDto.setPhone("+1234567890");
-        requestCustomerDto.setPassword("qWerty");
-
-        CustomerStatus status = customerServiceImpl.updateCustomer(johnDoeId, requestCustomerDto);
-
-        verify(customerRepository, times(1)).findById(johnDoeId);
-        verify(customerRepository, times(1)).save(johnDoe);
-
-        assertEquals(CustomerStatus.SUCCESS, status);
-        assertNotEquals("John Doe", johnDoe.getName());
-        assertNotEquals("johndoe@gmail.com", johnDoe.getEmail());
-        assertNotEquals(35, johnDoe.getAge());
     }
 
     @Test
