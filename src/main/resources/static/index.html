@@ -199,11 +199,47 @@ Content-Type: application/json
   "email": "john.newemail@example.com",
   "age": 31,
   "phone": "+380505555555",
-  "password": "qWerty!",
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Customer updated successfully"
+                {
+                "name": "John Doe",
+                "email": "john.newemail@example.com",
+                "age": 31,
+                "phone": "+380505555555",
+                },
+                {
+                "message": "Customer updated successfully"
+                }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/v1/customers/patch/{id}</h3>
+        <p>Updates an existing customer’s details using the provided <code>CustomerDto</code>. Returns a success message
+            if the update is successful, a message indicating nothing to update if no changes are made, or an error
+            message if the customer is not found.</p>
+        <div class="example">
+            <h4>Example Request</h4>
+            <pre><code>PUT /api/v1/customers/update/1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 31,
+}</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>{
+                {
+                "name": "John Doe",
+                "email": "john.newemail@example.com",
+                "age": 31,
+                "phone": "+380505555555",
+                },
+                {
+                "message": "Customer updated successfully"
+                }
 }</code></pre>
         </div>
     </div>
@@ -344,7 +380,15 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Funds added successfully"
+                {
+                  "id": 1,
+                  "currency": "USD",
+                  "cardNumber": "1234567890",
+                  "amount": 150
+                },
+                {
+                  "message": "Funds added successfully"
+                }
 }</code></pre>
         </div>
     </div>
@@ -365,7 +409,15 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Funds withdrawn successfully"
+                {
+                  "id": 1,
+                  "currency": "USD",
+                  "cardNumber": "1234567890",
+                  "amount": 150
+                },
+                {
+                  "message": "Funds withdrawn successfully"
+                }
 }</code></pre>
         </div>
     </div>
@@ -387,7 +439,15 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Funds sent successfully"
+                {
+                  "id": 1,
+                  "currency": "USD",
+                  "cardNumber": "1234567890",
+                  "amount": 150
+                },
+                {
+                  "message": "Funds sent successfully"
+                }
 }</code></pre>
         </div>
     </div>
@@ -515,7 +575,40 @@ Content-Type: application/json
 }</code></pre>
             <h4>Example Response</h4>
             <pre><code>{
-  "message": "Employer updated successfully"
+                {
+                "name": "Tech Solutions",
+                "address": "1234 Tech Park"
+                },
+                {
+                "message": "Employer updated successfully"
+                }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <h3>PUT /api/v1/employers/patch/{id}</h3>
+        <p>Updates an existing employer’s details using the provided <code>EmployerDto</code>. Returns a success message
+            if the update is successful, a message indicating nothing to update if no changes are made, or an error
+            message if the employer is not found.</p>
+        <div class="example">
+            <h4>Example Request</h4>
+            <pre><code>PUT /api/v1/employers/update/1
+Content-Type: application/json
+
+{
+  "name": "Tech Solutions",
+  "address": "1234 Tech Park"
+}</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>{
+                {
+                "name": "Tech Solutions",
+                "address": "1234 Tech Park"
+                },
+                {
+                "message": "Employer updated successfully"
+                }
 }</code></pre>
         </div>
     </div>
