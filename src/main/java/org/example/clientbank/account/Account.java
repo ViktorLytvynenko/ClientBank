@@ -1,15 +1,14 @@
 package org.example.clientbank.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import org.example.clientbank.customer.Customer;
 import org.example.clientbank.AbstractEntity;
 import org.example.clientbank.account.enums.Currency;
+import org.example.clientbank.customer.Customer;
 
 import java.util.UUID;
 
@@ -22,6 +21,21 @@ import static lombok.AccessLevel.PRIVATE;
 @Data
 @NoArgsConstructor
 @ToString(exclude = "customer")
+@NamedEntityGraph(
+        name = "accountWithCustomerAndCustomerEmployers",
+        attributeNodes = {
+                @NamedAttributeNode(value = "customer", subgraph = "customerGraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "customerGraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("employers"),
+                                @NamedAttributeNode("accounts")
+                        }
+                )
+        }
+)
 public class Account extends AbstractEntity {
 
     @Column(nullable = false)
@@ -35,7 +49,7 @@ public class Account extends AbstractEntity {
     Double balance;
 
     @ManyToOne
-    @JsonIgnore
+//    @JsonIgnore
     @JoinColumn
     Customer customer;
 

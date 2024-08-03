@@ -1,6 +1,5 @@
 package org.example.clientbank.employer;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +18,21 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @Data
 @NoArgsConstructor
+@NamedEntityGraph(
+        name = "employerWithCustomersAndAccountsAndOtherEmployers",
+        attributeNodes = {
+                @NamedAttributeNode(value = "customers", subgraph = "customerWithAccounts"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "customerWithAccounts",
+                        attributeNodes = {
+                                @NamedAttributeNode("accounts"),
+                                @NamedAttributeNode("employers")
+                        }
+                )
+        }
+)
 public class Employer extends AbstractEntity {
 
     @Column(nullable = false)
@@ -27,7 +41,7 @@ public class Employer extends AbstractEntity {
     @Column(nullable = false)
     String address;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "customers_employers",
