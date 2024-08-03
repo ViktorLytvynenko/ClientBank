@@ -21,11 +21,11 @@ import static lombok.AccessLevel.PRIVATE;
 @NamedEntityGraph(
         name = "graph.EmployerCustomerAccount",
         attributeNodes = {
-                @NamedAttributeNode(value = "customers", subgraph = "subgraph.account"),
+                @NamedAttributeNode(value = "customers", subgraph = "subgraph.customer"),
         },
         subgraphs = {
                 @NamedSubgraph(
-                        name = "subgraph.account",
+                        name = "subgraph.customer",
                         attributeNodes = {
                                 @NamedAttributeNode("accounts"),
                                 @NamedAttributeNode("employers")
