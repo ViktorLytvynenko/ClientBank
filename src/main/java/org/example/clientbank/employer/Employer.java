@@ -19,13 +19,13 @@ import static lombok.AccessLevel.PRIVATE;
 @Data
 @NoArgsConstructor
 @NamedEntityGraph(
-        name = "employerWithCustomersAndAccountsAndOtherEmployers",
+        name = "graph.EmployerCustomerAccount",
         attributeNodes = {
-                @NamedAttributeNode(value = "customers", subgraph = "customerWithAccounts"),
+                @NamedAttributeNode(value = "customers", subgraph = "subgraph.account"),
         },
         subgraphs = {
                 @NamedSubgraph(
-                        name = "customerWithAccounts",
+                        name = "subgraph.account",
                         attributeNodes = {
                                 @NamedAttributeNode("accounts"),
                                 @NamedAttributeNode("employers")
