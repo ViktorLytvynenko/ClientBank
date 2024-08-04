@@ -161,7 +161,6 @@ public class CustomerServiceImpl implements CustomerService {
         Account newAccount = new Account(currency, customer);
         customer.getAccounts().add(newAccount);
 
-        accountRepository.save(newAccount);
         customerRepository.save(customer);
         return newAccount;
     }
@@ -201,7 +200,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerRepository.save(customer);
-        employerRepository.save(employer);
+
         return CustomerStatus.SUCCESS;
     }
 
@@ -240,7 +239,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerRepository.save(customer);
-        employerRepository.save(employer);
+
         return CustomerStatus.SUCCESS;
     }
 }

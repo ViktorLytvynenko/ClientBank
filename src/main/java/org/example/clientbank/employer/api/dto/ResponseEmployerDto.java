@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
+import org.example.clientbank.customer.api.dto.ResponseCustomerDto;
 import org.example.clientbank.customer.api.dto.View;
 import org.example.clientbank.dto.AbstractDto;
+
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -24,4 +27,7 @@ public class ResponseEmployerDto extends AbstractDto {
 
     @JsonView(View.Admin.class)
     String address;
+
+    @JsonView(View.Admin.class)
+    List<ResponseCustomerDto> customers;
 }

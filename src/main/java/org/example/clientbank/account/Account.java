@@ -20,7 +20,6 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @Data
 @NoArgsConstructor
-@ToString(exclude = "customer")
 @NamedEntityGraph(
         name = "graph.AccountCustomerCustomer",
         attributeNodes = {
@@ -48,8 +47,12 @@ public class Account extends AbstractEntity {
     @Column(nullable = false)
     Double balance;
 
-    @ManyToOne
+    @ManyToOne(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
 //    @JsonIgnore
+    @ToString.Exclude
     @JoinColumn
     Customer customer;
 

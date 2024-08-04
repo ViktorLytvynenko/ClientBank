@@ -6,6 +6,8 @@ import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
+import org.example.clientbank.employer.Employer;
+import org.example.clientbank.employer.db.EmployerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +36,12 @@ class CustomerServiceImplTest {
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private EmployerRepository employerRepository;
+
     @InjectMocks
     private CustomerServiceImpl customerServiceImpl;
+
 
     private final long johnDoeId = 1L;
     private final long janeDoeId = 2L;
@@ -44,11 +50,24 @@ class CustomerServiceImplTest {
     private Customer janeDoe;
     private Customer jackDoe;
 
+    private final long googleId = 1L;
+    private final long amazonId = 2L;
+    private Employer google;
+    private Employer amazon;
+
     @BeforeEach
     void setUp() {
+        google = new Employer("Google", "USA, California");
+        google.setId(googleId);
+
+        amazon = new Employer("Amazon", "USA, Nevada");
+        amazon.setId(amazonId);
+
         johnDoe = new Customer("John Doe", "johndoe@gmail.com", 35, "qWerty", "+1234567890");
         johnDoe.setId(johnDoeId);
         johnDoe.getAccounts().add(new Account(USD, johnDoe));
+        johnDoe.getEmployers().add(google);
+        johnDoe.getEmployers().add(amazon);
 
         janeDoe = new Customer("Jane Doe", "janedoe@gmail.com", 31, "qWerty", "+1234555890");
         janeDoe.setId(janeDoeId);
@@ -160,9 +179,29 @@ class CustomerServiceImplTest {
 
     @Test
     void addEmployerToCustomer() {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+
+        Employer newEmployer = new Employer("Bosch", "Germany");
+        newEmployer.setId(3L);
+
+        when(employerRepository.findById(3L)).thenReturn(Optional.of(newEmployer));
+
+        customerServiceImpl.addEmployerToCustomer(johnDoeId, newEmployer.getId());
+
+        verify(customerRepository).save(johnDoe);
+        assertTrue(johnDoe.getEmployers().contains(newEmployer));
+        assertEquals(johnDoe.getEmployers().size(), 3);
     }
 
     @Test
     void removeEmployerFromCustomer() {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(employerRepository.findById(amazonId)).thenReturn(Optional.of(amazon));
+
+        customerServiceImpl.removeEmployerFromCustomer(johnDoeId, amazonId);
+        assertEquals(johnDoe.getEmployers().size(), 1);
+
+        verify(customerRepository, times(1)).save(johnDoe);
+        verify(employerRepository, times(1)).save(amazon);
     }
 }

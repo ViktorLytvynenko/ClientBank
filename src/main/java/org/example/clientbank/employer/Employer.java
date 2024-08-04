@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.AbstractEntity;
 import org.example.clientbank.customer.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -41,8 +43,14 @@ public class Employer extends AbstractEntity {
     @Column(nullable = false)
     String address;
 
-//    @JsonIgnore
-    @ManyToMany
+    //    @JsonIgnore
+    @ToString.Exclude
+    @ManyToMany(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.PERSIST
+    })
     @JoinTable(
             name = "customers_employers",
             joinColumns = @JoinColumn(name = "employer_id"),
@@ -53,5 +61,6 @@ public class Employer extends AbstractEntity {
     public Employer(String name, String address) {
         this.name = name;
         this.address = address;
+        this.customers = new ArrayList<>();
     }
 }

@@ -44,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (account.getBalance() >= sum) {
             account.setBalance(account.getBalance() - sum);
+            accountRepository.save(account);
             return account;
         } else {
             return null;
@@ -66,6 +67,8 @@ public class AccountServiceImpl implements AccountService {
         if (fromAccountOptional.get().getBalance() >= sum) {
             fromAccountOptional.get().setBalance(fromAccountOptional.get().getBalance() - sum);
             toAccountOptional.get().setBalance(toAccountOptional.get().getBalance() + sum);
+            accountRepository.save(fromAccountOptional.get());
+            accountRepository.save(toAccountOptional.get());
             return fromAccountOptional.get();
         } else {
             return null;
