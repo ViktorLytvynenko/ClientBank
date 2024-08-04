@@ -4,6 +4,7 @@ import org.example.clientbank.account.Account;
 import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
+import org.example.clientbank.customer.api.dto.RequestCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.example.clientbank.account.enums.Currency.USD;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +48,7 @@ class CustomerServiceImplTest {
     void setUp() {
         johnDoe = new Customer("John Doe", "johndoe@gmail.com", 35, "qWerty", "+1234567890");
         johnDoe.setId(johnDoeId);
+        johnDoe.getAccounts().add(new Account(USD, johnDoe));
 
         janeDoe = new Customer("Jane Doe", "janedoe@gmail.com", 31, "qWerty", "+1234555890");
         janeDoe.setId(janeDoeId);
@@ -99,28 +101,50 @@ class CustomerServiceImplTest {
 
     @Test
     void deleteById() {
+        when(customerRepository.existsById(janeDoeId)).thenReturn(true);
         customerServiceImpl.deleteById(janeDoeId);
-        verify(customerRepository, times(1)).deleteById(eq(2L));
+        verify(customerRepository, times(1)).deleteById(janeDoeId);
     }
 
     @Test
     void updateCustomer() {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+
+        RequestCustomerDto requestCustomerDto = new RequestCustomerDto("Max", "max@gmail.com", 25, "+3334567890", "newPassword123!");
+
+        Optional<Customer> updatedCustomerOptional = customerServiceImpl.updateCustomer(johnDoeId, requestCustomerDto);
+        assertTrue(updatedCustomerOptional.isPresent());
+
+        Customer updatedCustomer = updatedCustomerOptional.get();
+
+        assertNotEquals(johnDoe.getName(), "John Doe");
+        assertEquals(johnDoe.getName(), updatedCustomer.getName());
+
+        assertNotEquals(johnDoe.getEmail(), "johndoe@gmail.com");
+        assertEquals(johnDoe.getEmail(), updatedCustomer.getEmail());
 
     }
 
     @Test
     void deleteAccountsByCustomerId() {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
 
+        customerServiceImpl.deleteAccountsByCustomerId(johnDoeId);
+        assertEquals(johnDoe.getAccounts().size(), 0);
     }
 
     @Test
     void deleteAccountByCustomerId() {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+
+        customerServiceImpl.deleteAccountByCustomerId(johnDoeId, johnDoe.getAccounts().getFirst().getNumber());
+        assertEquals(johnDoe.getAccounts().size(), 0);
     }
 
     @Test
     @Transactional
     public void testCreateAccountByCustomerId() {
-        Currency currency = Currency.USD;
+        Currency currency = USD;
 
         when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
 
@@ -129,7 +153,7 @@ class CustomerServiceImplTest {
         assertEquals(currency, account.getCurrency());
         assertEquals(johnDoe, account.getCustomer());
         assertEquals(johnDoeId, account.getCustomer().getId());
-        assertEquals(1, johnDoe.getAccounts().size());
+        assertEquals(2, johnDoe.getAccounts().size());
         verify(accountRepository).save(account);
         verify(customerRepository).save(johnDoe);
     }

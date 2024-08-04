@@ -53,8 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteById(long id) {
-        boolean exists = customerRepository.existsById(id);
-        if (!exists) {
+        if (!customerRepository.existsById(id)) {
             throw new EmptyResultDataAccessException("Customer not found with id: " + id, 1);
         }
         customerRepository.deleteById(id);
