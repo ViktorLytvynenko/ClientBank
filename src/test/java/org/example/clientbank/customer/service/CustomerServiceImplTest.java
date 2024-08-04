@@ -5,6 +5,7 @@ import org.example.clientbank.account.db.AccountRepository;
 import org.example.clientbank.account.enums.Currency;
 import org.example.clientbank.customer.Customer;
 import org.example.clientbank.customer.api.dto.RequestCustomerDto;
+import org.example.clientbank.customer.api.dto.RequestPatchCustomerDto;
 import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.db.EmployerRepository;
@@ -122,6 +123,7 @@ class CustomerServiceImplTest {
     void deleteById() {
         when(customerRepository.existsById(janeDoeId)).thenReturn(true);
         customerServiceImpl.deleteById(janeDoeId);
+
         verify(customerRepository, times(1)).deleteById(janeDoeId);
     }
 
@@ -141,7 +143,24 @@ class CustomerServiceImplTest {
 
         assertNotEquals(johnDoe.getEmail(), "johndoe@gmail.com");
         assertEquals(johnDoe.getEmail(), updatedCustomer.getEmail());
+    }
 
+    @Test
+    void patchCustomer() throws IllegalAccessException {
+        when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+
+        RequestPatchCustomerDto requestPatchCustomerDto = new RequestPatchCustomerDto("Max", "max@gmail.com", 25, "+3334567890");
+
+        Optional<Customer> updatedCustomerOptional = customerServiceImpl.patchCustomer(johnDoeId, requestPatchCustomerDto);
+        assertTrue(updatedCustomerOptional.isPresent());
+
+        Customer updatedCustomer = updatedCustomerOptional.get();
+
+        assertNotEquals(johnDoe.getName(), "John Doe");
+        assertEquals(johnDoe.getName(), updatedCustomer.getName());
+
+        assertNotEquals(johnDoe.getEmail(), "johndoe@gmail.com");
+        assertEquals(johnDoe.getEmail(), updatedCustomer.getEmail());
     }
 
     @Test
