@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-customers_employers
+      author: Viktor Lytvynenko
+      changes:
+        - createTable:
+            tableName: customers_employers
+            columns:
+              - column:
+                  name: customer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: employer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            columnNames: customer_id, employer_id
+            constraintName: pk_customers_employers
+            tableName: customers_employers
+        - addForeignKeyConstraint:
+            baseTableName: customers_employers
+            baseColumnNames: customer_id
+            constraintName: fk_customers_employers_customer
+            referencedTableName: customers
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: customers_employers
+            baseColumnNames: employer_id
+            constraintName: fk_customers_employers_employer
+            referencedTableName: employers
+            referencedColumnNames: id
+            onDelete: CASCADE
