@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 import org.example.clientbank.account.api.dto.ResponseAccountDto;
+import org.example.clientbank.dto.AbstractDto;
 import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,10 @@ import java.util.List;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @Data
-public class ResponseCustomerAllDataDto {
+public class ResponseCustomerAllDataDto extends AbstractDto {
     @JsonView(View.Admin.class)
     Long id;
 

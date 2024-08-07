@@ -20,6 +20,13 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+//@NamedEntityGraph(
+//        name = "graph.CustomerAccountEmployer",
+//        attributeNodes = {
+//                @NamedAttributeNode("employers"),
+//                @NamedAttributeNode("accounts")
+//        }
+//)
 public class Customer extends AbstractEntity {
 
     @Column(nullable = false)

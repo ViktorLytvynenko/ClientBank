@@ -1,5 +1,6 @@
 package org.example.clientbank.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,21 +21,21 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @Data
 @NoArgsConstructor
-@NamedEntityGraph(
-        name = "graph.AccountCustomerCustomer",
-        attributeNodes = {
-                @NamedAttributeNode(value = "customer", subgraph = "subgraph.customer")
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "subgraph.customer",
-                        attributeNodes = {
-                                @NamedAttributeNode("employers"),
-                                @NamedAttributeNode("accounts")
-                        }
-                )
-        }
-)
+//@NamedEntityGraph(
+//        name = "graph.AccountCustomerEmployer",
+//        attributeNodes = {
+//                @NamedAttributeNode(value = "customer", subgraph = "subgraph.customer")
+//        },
+//        subgraphs = {
+//                @NamedSubgraph(
+//                        name = "subgraph.customer",
+//                        attributeNodes = {
+//                                @NamedAttributeNode("employers"),
+//                                @NamedAttributeNode("accounts")
+//                        }
+//                )
+//        }
+//)
 public class Account extends AbstractEntity {
 
     @Column(nullable = false)
@@ -50,8 +51,8 @@ public class Account extends AbstractEntity {
     @ManyToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
-    })
-//    @JsonIgnore
+    }, fetch = FetchType.EAGER)
+    @JsonIgnore
     @ToString.Exclude
     @JoinColumn
     Customer customer;

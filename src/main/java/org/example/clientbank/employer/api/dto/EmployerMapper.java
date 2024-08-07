@@ -17,6 +17,6 @@ public interface EmployerMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "address", target = "address")
-    @Mapping(source = "customers", target = "customers")
+//    @Mapping(source = "customers", target = "customers")
     ResponseEmployerDto employerToEmployerDto(Employer employer);
 }
