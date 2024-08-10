@@ -11,7 +11,6 @@ import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.db.EmployerRepository;
-import org.example.clientbank.employer.status.EmployerStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -167,16 +166,16 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public Enum<?> addEmployerToCustomer(long customerId, long employerId) {
+    public CustomerStatus addEmployerToCustomer(long customerId, long employerId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);
 
         if (customerOptional.isEmpty()) {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
+            return CustomerStatus.EMPLOYER_NOT_FOUND;
         }
 
         if (employerOptional.isEmpty()) {
-            return EmployerStatus.EMPLOYER_NOT_FOUND;
+            return CustomerStatus.UNEXPECTED;
         }
 
         Customer customer = customerOptional.get();
@@ -206,7 +205,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public Enum<?> removeEmployerFromCustomer(long customerId, long employerId) {
+    public CustomerStatus removeEmployerFromCustomer(long customerId, long employerId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);
 
@@ -215,7 +214,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if (employerOptional.isEmpty()) {
-            return EmployerStatus.EMPLOYER_NOT_FOUND;
+            return CustomerStatus.EMPLOYER_NOT_FOUND;
         }
 
         Customer customer = customerOptional.get();

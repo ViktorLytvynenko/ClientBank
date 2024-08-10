@@ -34,7 +34,7 @@ public interface CustomerService {
 
     Account createAccountByCustomerId(long id, Currency currency);
 
-    Enum<?> addEmployerToCustomer(long customerId, long employerId);
+    CustomerStatus addEmployerToCustomer(long customerId, long employerId);
 
-    Enum<?> removeEmployerFromCustomer(long customerId, long employerId);
+    CustomerStatus removeEmployerFromCustomer(long customerId, long employerId);
 }

@@ -67,7 +67,7 @@ public class EmployerController {
     }
 
     @GetMapping("/employer/{id}")
-    public ResponseEntity<Optional<ResponseEmployerDto>> getCustomerById(@PathVariable long id) {
+    public ResponseEntity<Optional<ResponseEmployerDto>> getEmployerById(@PathVariable long id) {
         log.info("Trying to get employer by id");
 
         Optional<Employer> employerOptional = employerService.getEmployerById(id);

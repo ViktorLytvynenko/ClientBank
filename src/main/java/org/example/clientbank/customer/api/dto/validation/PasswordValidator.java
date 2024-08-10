@@ -18,7 +18,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
 
-        if (password.length() < 8 || password.length() > 20) {
+        if (password.length() < 5 || password.length() > 20) {
             return false;
         }
 

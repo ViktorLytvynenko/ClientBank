@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum CustomerStatus {
     SUCCESS("Success operation."),
     CUSTOMER_NOT_FOUND("Customer not found."),
+    EMPLOYER_NOT_FOUND("Employer not found."),
     NOTHING_TO_UPDATE("No changes detected for the customer."),
     CUSTOMER_UPDATED("Customer was successfully updated."),
     DELETED("Customer was successfully deleted."),

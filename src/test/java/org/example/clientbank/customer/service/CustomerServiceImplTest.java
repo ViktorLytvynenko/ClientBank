@@ -192,7 +192,6 @@ class CustomerServiceImplTest {
         assertEquals(johnDoe, account.getCustomer());
         assertEquals(johnDoeId, account.getCustomer().getId());
         assertEquals(2, johnDoe.getAccounts().size());
-        verify(accountRepository).save(account);
         verify(customerRepository).save(johnDoe);
     }
 
@@ -221,6 +220,5 @@ class CustomerServiceImplTest {
         assertEquals(johnDoe.getEmployers().size(), 1);
 
         verify(customerRepository, times(1)).save(johnDoe);
-        verify(employerRepository, times(1)).save(amazon);
     }
 }

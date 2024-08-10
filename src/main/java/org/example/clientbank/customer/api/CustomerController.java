@@ -248,14 +248,13 @@ public class CustomerController {
     public ResponseEntity<ResponseMessage> addEmployerToCustomer(@RequestParam long customerId,
                                                                  @RequestParam long employerId) {
         log.info("Trying to connect customer and employer");
-        Enum<?> status = customerService.addEmployerToCustomer(customerId, employerId);
-
+        CustomerStatus status = customerService.addEmployerToCustomer(customerId, employerId);
 
         if (status == CustomerStatus.SUCCESS) {
             return ResponseEntity.ok(new ResponseMessage(CustomerStatus.SUCCESS.getMessage()));
         } else if (status == CustomerStatus.CUSTOMER_NOT_FOUND) {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
-        } else if (status == EmployerStatus.EMPLOYER_NOT_FOUND) {
+        } else if (status == CustomerStatus.EMPLOYER_NOT_FOUND) {
             return ResponseEntity.badRequest().body(new ResponseMessage(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage()));
         } else if (status == CustomerStatus.NOTHING_TO_UPDATE) {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
@@ -276,7 +275,7 @@ public class CustomerController {
             return ResponseEntity.ok(new ResponseMessage(CustomerStatus.SUCCESS.getMessage()));
         } else if (status == CustomerStatus.CUSTOMER_NOT_FOUND) {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
-        } else if (status == EmployerStatus.EMPLOYER_NOT_FOUND) {
+        } else if (status == CustomerStatus.EMPLOYER_NOT_FOUND) {
             return ResponseEntity.badRequest().body(new ResponseMessage(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage()));
         } else if (status == CustomerStatus.NOTHING_TO_UPDATE) {
             return ResponseEntity.badRequest().body(new ResponseMessage(CustomerStatus.NOTHING_TO_UPDATE.getMessage()));
