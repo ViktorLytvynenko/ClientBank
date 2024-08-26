@@ -25,11 +25,11 @@ import java.util.Optional;
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/employers")
-@CrossOrigin(origins = {
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://client-bank-front-end.vercel.app"
-}, allowedHeaders = "*")
+//@CrossOrigin(origins = {
+//        "http://localhost:3000",
+//        "http://localhost:3001",
+//        "https://client-bank-front-end.vercel.app"
+//}, allowedHeaders = "*")
 @RequiredArgsConstructor
 public class EmployerController {
     private final EmployerServiceImpl employerService;

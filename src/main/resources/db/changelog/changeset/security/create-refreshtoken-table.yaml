@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-refresh-tokens
+      author: Viktor Lytvynenko
+      changes:
+        - createTable:
+            tableName: refresh_tokens
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: refresh_token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_valid
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: refresh_tokens
+            baseColumnNames: user_id
+            constraintName: fk_refresh_tokens_user
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE

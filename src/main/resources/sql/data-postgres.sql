@@ -1,3 +1,11 @@
+INSERT INTO users(enabled, encrypted_password, user_name)
+VALUES (true, '$2a$10$BXH1wlAJPIMXvjnJTBoRuea4CvZwSs8/Zqz4bDRZBDJ6hxvXoHlqq', 'user'),
+       (true, '$2a$10$BXH1wlAJPIMXvjnJTBoRuea4CvZwSs8/Zqz4bDRZBDJ6hxvXoHlqq', 'admin');
+
+INSERT INTO roles(role_id, role_name, user_id)
+VALUES (101, 'USER', 1),
+       (102, 'ADMIN', 2);
+
 INSERT INTO customers (name, email, age, password, phone, created_date, last_modified_date)
 VALUES ('Viktor', 'viktor@gmail.com', 35, 'qWerty', '+1234567890', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Maksim', 'maksim@gmail.com', 34, 'qWerty', '+0987654321', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

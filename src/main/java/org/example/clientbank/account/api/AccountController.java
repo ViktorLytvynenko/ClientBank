@@ -19,11 +19,11 @@ import javax.security.auth.login.AccountNotFoundException;
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/accounts")
-@CrossOrigin(origins = {
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://client-bank-front-end.vercel.app"
-}, allowedHeaders = "*")
+//@CrossOrigin(origins = {
+//        "http://localhost:3000",
+//        "http://localhost:3001",
+//        "https://client-bank-front-end.vercel.app"
+//}, allowedHeaders = "*")
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountServiceImpl accountService;

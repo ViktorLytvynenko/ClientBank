@@ -1,9 +1,42 @@
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS customers_employers;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS employers;
+DROP TABLE IF EXISTS refresh_tokens;
 
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users
+(
+    id                 INT AUTO_INCREMENT PRIMARY KEY,
+    user_name          VARCHAR(36)  NOT NULL,
+    encrypted_password VARCHAR(128) NOT NULL,
+    enabled            boolean      NOT NULL,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+
+);
+
+CREATE TABLE roles
+(
+    role_id   INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(30) NOT NULL,
+    id        INT         NOT NULL,
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE refresh_tokens
+(
+    id   INT AUTO_INCREMENT PRIMARY KEY,
+    refresh_token VARCHAR(255) NOT NULL,
+    is_valid BOOLEAN NOT NULL,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    user_id   INT         NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 
 CREATE TABLE customers
 (

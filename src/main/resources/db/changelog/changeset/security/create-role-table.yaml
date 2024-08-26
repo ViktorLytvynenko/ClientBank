@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-role
+      author: Viktor Lytvynenko
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: roles
+            baseColumnNames: user_id
+            constraintName: fk_roles_user
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE

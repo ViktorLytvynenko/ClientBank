@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user
+      author: Viktor Lytvynenko
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: encrypted_password
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
