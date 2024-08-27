@@ -4,21 +4,17 @@ package org.example.clientbank.security.SysUser.service;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.example.clientbank.security.refreshToken.RefreshToken;
+import org.example.clientbank.security.SysUser.SysUser;
 import org.example.clientbank.security.SysUser.api.dto.JwtRequest;
 import org.example.clientbank.security.SysUser.api.dto.JwtResponse;
-import org.example.clientbank.security.SysUser.SysUser;
 import org.example.clientbank.security.jwt.JwtProvider;
+import org.example.clientbank.security.refreshToken.RefreshToken;
 import org.example.clientbank.security.refreshToken.db.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
-
 public class AuthService {
 
     private final UserService userService;
