@@ -1,6 +1,9 @@
 package org.example.clientbank.customer.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.account.api.dto.ResponseAccountDto;
 import org.example.clientbank.account.enums.Currency;
@@ -12,11 +15,13 @@ import org.example.clientbank.customer.service.CustomerServiceImpl;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
+import org.example.clientbank.security.SysRole.SysRole;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,10 +34,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 import static org.example.clientbank.account.enums.Currency.USD;
 import static org.hamcrest.Matchers.hasSize;
@@ -75,6 +80,11 @@ class CustomerControllerTest {
     private final long amazonId = 2L;
     private Employer google;
     private Employer amazon;
+
+    private String accessToken;
+
+    @Value("${jwt.secret.access}")
+    private String secretAccess;
 
     @BeforeEach
     void setUp() {
@@ -167,13 +177,25 @@ class CustomerControllerTest {
                 johnDoe.getAge(),
                 johnDoe.getPhone()
         );
+
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant accessExpirationInstant = now.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant();
+        final Date accessExpiration = Date.from(accessExpirationInstant);
+        accessToken = Jwts.builder()
+                .setSubject("admin")
+                .setExpiration(accessExpiration)
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretAccess)))
+                .claim("roles", new ArrayList<SysRole>())
+                .claim("userName", "admin")
+                .compact();
     }
 
     @Test
     public void findAll() throws Exception {
         List<Customer> customers = Arrays.asList(johnDoe, janeDoe);
         when(customerService.findAll()).thenReturn(customers);
-        mockMvc.perform(get("/api/v1/customers"))
+        mockMvc.perform(get("/api/v1/customers")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -184,6 +206,7 @@ class CustomerControllerTest {
         when(customerMapper.customerToCustomerAllDataDto(johnDoe)).thenReturn(responseJohnDoeAllDataDto);
 
         mockMvc.perform(get("/api/v1/customers/all_data")
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -212,7 +235,8 @@ class CustomerControllerTest {
         List<Customer> customers = Arrays.asList(johnDoe, janeDoe);
 
         when(customerService.findAll()).thenReturn(customers);
-        mockMvc.perform(get("/api/v1/customers/shortened"))
+        mockMvc.perform(get("/api/v1/customers/shortened")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -226,6 +250,7 @@ class CustomerControllerTest {
         when(customerService.findAllFiltered(any(Pageable.class))).thenReturn(customerPage);
 
         mockMvc.perform(get("/api/v1/customers/filter?page=0&size=10")
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -247,6 +272,7 @@ class CustomerControllerTest {
         when(customerMapper.customerToCustomerDto(johnDoe)).thenReturn(responseJohnDoeDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customers/customer/{id}", johnDoeId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(responseJohnDoeDto.getId().intValue())))
@@ -263,6 +289,7 @@ class CustomerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestCustomerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customers/create")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -281,6 +308,7 @@ class CustomerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestCustomerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customers/update/{id}", johnDoeId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
@@ -299,6 +327,7 @@ class CustomerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestCustomerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/customers/patch/{id}", johnDoeId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
@@ -314,6 +343,7 @@ class CustomerControllerTest {
         when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/customers/delete/{id}", johnDoeId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", Matchers.is(CustomerStatus.DELETED.getMessage())));
@@ -335,6 +365,7 @@ class CustomerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestModel);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customers/create_account_by_id")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -351,6 +382,7 @@ class CustomerControllerTest {
                 .thenReturn(CustomerStatus.SUCCESS);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/customers/delete_account_by_id")
+                        .header("Authorization", "Bearer " + accessToken)
                         .param("id", String.valueOf(johnDoeId))
                         .param("accountNumber", "123456789")
                         .accept(MediaType.APPLICATION_JSON))
@@ -365,6 +397,7 @@ class CustomerControllerTest {
         when(customerService.deleteAccountsByCustomerId(johnDoeId)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/customers/delete_accounts_by_id")
+                        .header("Authorization", "Bearer " + accessToken)
                         .param("id", String.valueOf(johnDoeId))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -385,6 +418,7 @@ class CustomerControllerTest {
         when(customerService.addEmployerToCustomer(johnDoeId, facebook.getId())).thenReturn(CustomerStatus.SUCCESS);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customers/customer/add_employer")
+                        .header("Authorization", "Bearer " + accessToken)
                         .param("customerId", String.valueOf(johnDoeId))
                         .param("employerId", String.valueOf(facebook.getId()))
                         .accept(MediaType.APPLICATION_JSON))
@@ -398,6 +432,7 @@ class CustomerControllerTest {
         when(customerService.removeEmployerFromCustomer(johnDoeId, amazon.getId())).thenReturn(CustomerStatus.SUCCESS);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customers/customer/remove_employer")
+                        .header("Authorization", "Bearer " + accessToken)
                         .param("customerId", String.valueOf(johnDoeId))
                         .param("employerId", String.valueOf(amazon.getId()))
                         .accept(MediaType.APPLICATION_JSON))

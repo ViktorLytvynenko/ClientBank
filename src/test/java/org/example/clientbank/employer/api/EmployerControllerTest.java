@@ -1,16 +1,21 @@
 package org.example.clientbank.employer.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.api.dto.EmployerMapper;
 import org.example.clientbank.employer.api.dto.RequestEmployerDto;
 import org.example.clientbank.employer.api.dto.ResponseEmployerDto;
 import org.example.clientbank.employer.service.EmployerServiceImpl;
 import org.example.clientbank.employer.status.EmployerStatus;
+import org.example.clientbank.security.SysRole.SysRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,10 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +55,11 @@ class EmployerControllerTest {
     private ResponseEmployerDto responseEmployerDto;
     private RequestEmployerDto requestEmployerDto;
 
+    private String accessToken;
+
+    @Value("${jwt.secret.access}")
+    private String secretAccess;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -74,6 +84,17 @@ class EmployerControllerTest {
                 google.getName(),
                 google.getAddress()
         );
+
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant accessExpirationInstant = now.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant();
+        final Date accessExpiration = Date.from(accessExpirationInstant);
+        accessToken = Jwts.builder()
+                .setSubject("admin")
+                .setExpiration(accessExpiration)
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretAccess)))
+                .claim("roles", new ArrayList<SysRole>())
+                .claim("userName", "admin")
+                .compact();
     }
 
     @Test
@@ -81,13 +102,10 @@ class EmployerControllerTest {
         List<Employer> employers = Arrays.asList(google, amazon);
         when(employerService.findAll()).thenReturn(employers);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employers"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employers")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)));
-    }
-
-    @Test
-    void findAllFiltered() {
     }
 
     @Test
@@ -96,6 +114,7 @@ class EmployerControllerTest {
         when(employerMapper.employerToEmployerDto(google)).thenReturn(responseEmployerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employers/employer/{id}", googleId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(responseEmployerDto.getId()))
@@ -111,6 +130,7 @@ class EmployerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestEmployerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employers/create")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -127,6 +147,7 @@ class EmployerControllerTest {
         String requestJson = new ObjectMapper().writeValueAsString(requestEmployerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/employers/update/{id}", googleId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -136,14 +157,11 @@ class EmployerControllerTest {
     }
 
     @Test
-    void patchCustomer() {
-    }
-
-    @Test
     void deleteById() throws Exception {
         when(employerService.getEmployerById(googleId)).thenReturn(Optional.of(google));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/employers/delete/{id}", googleId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(EmployerStatus.DELETED.getMessage()));
