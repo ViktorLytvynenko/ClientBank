@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.Optional;
@@ -23,6 +25,9 @@ class AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @InjectMocks
     private AccountServiceImpl accountServiceImpl;
@@ -55,20 +60,20 @@ class AccountServiceImplTest {
     void getAccountByAccountNumber() {
         when(accountRepository.findByNumber("123456789")).thenReturn(Optional.of(firstAccount));
 
-        Optional<Account> accountOptional = accountServiceImpl.getAccountByAccountNumber("123456789");
+        Account account = accountServiceImpl.getAccountByAccountNumber("123456789");
 
-        assertTrue(accountOptional.isPresent());
-        assertEquals(firstAccount.getNumber(), accountOptional.get().getNumber());
+        assertEquals(firstAccount.getNumber(), account.getNumber());
     }
 
     @Test
-    void addFunds() throws AccountNotFoundException {
+    void addFunds() {
         when(accountRepository.findByNumber("123456789")).thenReturn(Optional.of(firstAccount));
 
         Account updatedAccount = accountServiceImpl.addFunds("123456789", 50.0);
 
         assertEquals(150.0, updatedAccount.getBalance());
         verify(accountRepository).save(firstAccount);
+        verify(simpMessagingTemplate).convertAndSend("/topic/balance", firstAccount);
     }
 
     @Test
@@ -79,6 +84,7 @@ class AccountServiceImplTest {
 
         assertEquals(50.0, updatedAccount.getBalance());
         verify(accountRepository).save(firstAccount);
+        verify(simpMessagingTemplate).convertAndSend("/topic/balance", firstAccount);
     }
 
     @Test
@@ -91,5 +97,6 @@ class AccountServiceImplTest {
         assertEquals(85.0, updatedFromAccount.getBalance());
         verify(accountRepository).save(firstAccount);
         verify(accountRepository).save(secondAccount);
+        verify(simpMessagingTemplate).convertAndSend("/topic/balance", firstAccount);
     }
 }

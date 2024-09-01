@@ -82,10 +82,9 @@ class CustomerServiceImplTest {
     void getCustomerById() {
         when(customerRepository.findById(johnDoeId)).thenReturn(Optional.of(johnDoe));
 
-        Optional<Customer> actualCustomer = customerServiceImpl.getCustomerById(johnDoeId);
+        Customer actualCustomer = customerServiceImpl.getCustomerById(johnDoeId);
 
-        assertTrue(actualCustomer.isPresent());
-        assertEquals(johnDoe, actualCustomer.get());
+        assertEquals(johnDoe, actualCustomer);
     }
 
     @Test
@@ -133,10 +132,9 @@ class CustomerServiceImplTest {
 
         RequestCustomerDto requestCustomerDto = new RequestCustomerDto("Max", "max@gmail.com", 25, "+3334567890", "newPassword123!");
 
-        Optional<Customer> updatedCustomerOptional = customerServiceImpl.updateCustomer(johnDoeId, requestCustomerDto);
-        assertTrue(updatedCustomerOptional.isPresent());
+        Customer updatedCustomerOptional = customerServiceImpl.updateCustomer(johnDoeId, requestCustomerDto);
 
-        Customer updatedCustomer = updatedCustomerOptional.get();
+        Customer updatedCustomer = updatedCustomerOptional;
 
         assertNotEquals(johnDoe.getName(), "John Doe");
         assertEquals(johnDoe.getName(), updatedCustomer.getName());
@@ -151,10 +149,7 @@ class CustomerServiceImplTest {
 
         RequestPatchCustomerDto requestPatchCustomerDto = new RequestPatchCustomerDto("Max", "max@gmail.com", 25, "+3334567890");
 
-        Optional<Customer> updatedCustomerOptional = customerServiceImpl.patchCustomer(johnDoeId, requestPatchCustomerDto);
-        assertTrue(updatedCustomerOptional.isPresent());
-
-        Customer updatedCustomer = updatedCustomerOptional.get();
+        Customer updatedCustomer = customerServiceImpl.patchCustomer(johnDoeId, requestPatchCustomerDto);
 
         assertNotEquals(johnDoe.getName(), "John Doe");
         assertEquals(johnDoe.getName(), updatedCustomer.getName());

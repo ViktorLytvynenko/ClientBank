@@ -5,7 +5,7 @@ import org.example.clientbank.account.Account;
 import java.util.Optional;
 
 public interface AccountService {
-    Optional<Account> getAccountByAccountNumber(String number);
+    Account getAccountByAccountNumber(String number);
 
     Account addFunds(String number, double sum);
 

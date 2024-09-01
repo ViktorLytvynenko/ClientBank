@@ -268,7 +268,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerById() throws Exception {
-        when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(customerService.getCustomerById(johnDoeId)).thenReturn(johnDoe);
         when(customerMapper.customerToCustomerDto(johnDoe)).thenReturn(responseJohnDoeDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customers/customer/{id}", johnDoeId)
@@ -302,7 +302,7 @@ class CustomerControllerTest {
 
     @Test
     void updateCustomer() throws Exception {
-        when(customerService.updateCustomer(johnDoeId, requestCustomerDto)).thenReturn(Optional.ofNullable(johnDoe));
+        when(customerService.updateCustomer(johnDoeId, requestCustomerDto)).thenReturn(johnDoe);
         when(customerMapper.customerToCustomerDto(johnDoe)).thenReturn(responseJohnDoeDto);
 
         String requestJson = new ObjectMapper().writeValueAsString(requestCustomerDto);
@@ -321,7 +321,7 @@ class CustomerControllerTest {
 
     @Test
     void patchCustomer() throws Exception {
-        when(customerService.patchCustomer(johnDoeId, requestPatchCustomerDto)).thenReturn(Optional.ofNullable(johnDoe));
+        when(customerService.patchCustomer(johnDoeId, requestPatchCustomerDto)).thenReturn(johnDoe);
         when(customerMapper.customerToCustomerDto(johnDoe)).thenReturn(responseJohnDoeDto);
 
         String requestJson = new ObjectMapper().writeValueAsString(requestCustomerDto);
@@ -340,7 +340,7 @@ class CustomerControllerTest {
 
     @Test
     void deleteById() throws Exception {
-        when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(customerService.getCustomerById(johnDoeId)).thenReturn(johnDoe);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/customers/delete/{id}", johnDoeId)
                         .header("Authorization", "Bearer " + accessToken)
@@ -353,7 +353,7 @@ class CustomerControllerTest {
 
     @Test
     void createAccountByCustomerId() throws Exception {
-        when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(customerService.getCustomerById(johnDoeId)).thenReturn(johnDoe);
 
         Account createdAccount = new Account();
         createdAccount.setId(5L);
@@ -408,7 +408,7 @@ class CustomerControllerTest {
 
     @Test
     void addEmployerToCustomer() throws Exception {
-        when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(customerService.getCustomerById(johnDoeId)).thenReturn(johnDoe);
 
         Employer facebook = new Employer("Facebook", "USA, Nevada");
         facebook.setId(3L);
@@ -428,7 +428,7 @@ class CustomerControllerTest {
 
     @Test
     void removeEmployerFromCustomer() throws Exception {
-        when(customerService.getCustomerById(johnDoeId)).thenReturn(Optional.of(johnDoe));
+        when(customerService.getCustomerById(johnDoeId)).thenReturn(johnDoe);
         when(customerService.removeEmployerFromCustomer(johnDoeId, amazon.getId())).thenReturn(CustomerStatus.SUCCESS);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customers/customer/remove_employer")
