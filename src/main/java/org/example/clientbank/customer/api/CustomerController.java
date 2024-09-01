@@ -17,15 +17,16 @@ import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.dto.BaseResponseDto;
 import org.example.clientbank.dto.ResponseMessage;
 import org.example.clientbank.employer.status.EmployerStatus;
+import org.example.clientbank.exceptions.CustomerNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -99,15 +100,14 @@ public class CustomerController {
 
     @GetMapping("/customer/{id}")
     @JsonView(View.Admin.class)
-    public ResponseEntity<Optional<ResponseCustomerDto>> getCustomerById(@PathVariable long id) {
-        log.info("Trying to get customer by id");
-        Optional<ResponseCustomerDto> customerOptional = customerService.getCustomerById(id)
-                .map(CustomerMapper.INSTANCE::customerToCustomerDto);
+    public ResponseEntity<ResponseCustomerDto> getCustomerById(@PathVariable long id) {
+        log.info("Trying to get customer by id: {}", id);
 
-        if (customerOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(customerOptional);
+        Customer customer = customerService.getCustomerById(id);
+
+        ResponseCustomerDto responseDto = CustomerMapper.INSTANCE.customerToCustomerDto(customer);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/create")
@@ -129,40 +129,57 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> updateCustomer(@PathVariable Long id, @Valid @RequestBody RequestCustomerDto requestCustomerDto) {
-        log.info("Trying to update customer");
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> updateCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody RequestCustomerDto requestCustomerDto) {
+
+        log.info("Trying to update customer with ID: {}", id);
 
         BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
-        Optional<Customer> customerOptional = customerService.updateCustomer(id, requestCustomerDto);
+        try {
+            Customer updatedCustomer = customerService.updateCustomer(id, requestCustomerDto);
 
-        if (customerOptional.isPresent()) {
-            Customer updatedCustomer = customerOptional.get();
             ResponseCustomerDto responseCustomerDto = CustomerMapper.INSTANCE.customerToCustomerDto(updatedCustomer);
             baseResponseDto.setDto(responseCustomerDto);
             baseResponseDto.setMessage(CustomerStatus.CUSTOMER_UPDATED.getMessage());
+
             return ResponseEntity.ok(baseResponseDto);
-        } else {
+
+        } catch (CustomerNotFoundException ex) {
+            baseResponseDto.setMessage(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(baseResponseDto);
+
+        } catch (Exception ex) {
+            log.error("Unexpected error occurred while updating customer: {}", ex.getMessage(), ex);
             baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
-            return ResponseEntity.badRequest().body(baseResponseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(baseResponseDto);
         }
     }
 
     @PatchMapping("/patch/{id}")
-    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> patchCustomer(@PathVariable Long id, @Valid @RequestBody RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException {
-        log.info("Trying to patch customer");
+    public ResponseEntity<BaseResponseDto<ResponseCustomerDto>> patchCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody RequestPatchCustomerDto requestPatchCustomerDto) {
+        log.info("Trying to patch customer with ID: {}", id);
 
         BaseResponseDto<ResponseCustomerDto> baseResponseDto = new BaseResponseDto<>();
-        Optional<Customer> customerOptional = customerService.patchCustomer(id, requestPatchCustomerDto);
 
-        if (customerOptional.isPresent()) {
-            Customer updatedCustomer = customerOptional.get();
+        try {
+            Customer updatedCustomer = customerService.patchCustomer(id, requestPatchCustomerDto);
             ResponseCustomerDto responseCustomerDto = CustomerMapper.INSTANCE.customerToCustomerDto(updatedCustomer);
+
             baseResponseDto.setDto(responseCustomerDto);
             baseResponseDto.setMessage(CustomerStatus.CUSTOMER_UPDATED.getMessage());
+
             return ResponseEntity.ok(baseResponseDto);
-        } else {
+
+        } catch (CustomerNotFoundException e) {
+            baseResponseDto.setMessage(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(baseResponseDto);
+
+        } catch (Exception e) {
             baseResponseDto.setMessage(CustomerStatus.UNEXPECTED.getMessage());
-            return ResponseEntity.badRequest().body(baseResponseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(baseResponseDto);
         }
     }
 

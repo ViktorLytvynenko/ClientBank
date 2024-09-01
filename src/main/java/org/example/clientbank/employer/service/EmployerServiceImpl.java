@@ -5,7 +5,8 @@ import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.api.dto.RequestEmployerDto;
 import org.example.clientbank.employer.api.dto.RequestPatchEmployerDto;
 import org.example.clientbank.employer.db.EmployerRepository;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.example.clientbank.employer.status.EmployerStatus;
+import org.example.clientbank.exceptions.EmployerNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class EmployerServiceImpl implements EmployerService {
     @Override
     public void deleteById(Long id) {
         if (!employerRepository.existsById(id)) {
-            throw new EmptyResultDataAccessException("Customer not found with id: " + id, 1);
+            throw new EmployerNotFoundException(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage() + " Id: " + id);
         }
         employerRepository.deleteById(id);
     }
@@ -53,7 +54,7 @@ public class EmployerServiceImpl implements EmployerService {
         Optional<Employer> employerOptional = getEmployerById(id);
 
         if (employerOptional.isEmpty()) {
-            return Optional.empty();
+            throw new EmployerNotFoundException(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage());
         }
 
         employerOptional.get().setName(requestEmployerDto.getName());
@@ -67,7 +68,7 @@ public class EmployerServiceImpl implements EmployerService {
     public Optional<Employer> patchEmployer(Long id, RequestPatchEmployerDto requestPatchEmployerDto) throws IllegalAccessException {
         Optional<Employer> employerOptional = getEmployerById(id);
         if (employerOptional.isEmpty()) {
-            return Optional.empty();
+            throw new EmployerNotFoundException(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage());
         }
 
         Field[] dtoFields = RequestPatchEmployerDto.class.getDeclaredFields();

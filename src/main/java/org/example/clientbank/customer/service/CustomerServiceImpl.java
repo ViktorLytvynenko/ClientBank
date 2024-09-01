@@ -11,7 +11,10 @@ import org.example.clientbank.customer.db.CustomerRepository;
 import org.example.clientbank.customer.status.CustomerStatus;
 import org.example.clientbank.employer.Employer;
 import org.example.clientbank.employer.db.EmployerRepository;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.example.clientbank.employer.status.EmployerStatus;
+import org.example.clientbank.exceptions.CardNotFoundException;
+import org.example.clientbank.exceptions.CustomerNotFoundException;
+import org.example.clientbank.exceptions.EmployerNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,8 +44,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<Customer> getCustomerById(long id) {
-        return customerRepository.findById(id);
+    public Customer getCustomerById(long id) {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage()));
     }
 
     @Override
@@ -53,32 +57,26 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteById(long id) {
         if (!customerRepository.existsById(id)) {
-            throw new EmptyResultDataAccessException("Customer not found with id: " + id, 1);
+            throw new CustomerNotFoundException(CustomerStatus.CUSTOMER_NOT_FOUND.getMessage() + " Id: " + id);
         }
         customerRepository.deleteById(id);
     }
 
     @Override
-    public Optional<Customer> updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
-        Optional<Customer> customerOptional = getCustomerById(id);
-        if (customerOptional.isEmpty()) {
-            return Optional.empty();
-        }
+    public Customer updateCustomer(Long id, RequestCustomerDto requestCustomerDto) {
+        Customer customer = getCustomerById(id);
 
-        customerOptional.get().setName(requestCustomerDto.getName());
-        customerOptional.get().setEmail(requestCustomerDto.getEmail());
-        customerOptional.get().setAge(requestCustomerDto.getAge());
+        customer.setName(requestCustomerDto.getName());
+        customer.setEmail(requestCustomerDto.getEmail());
+        customer.setAge(requestCustomerDto.getAge());
 
-        customerRepository.save(customerOptional.get());
-        return customerOptional;
+        customerRepository.save(customer);
+        return customer;
     }
 
     @Override
-    public Optional<Customer> patchCustomer(Long id, RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException {
-        Optional<Customer> customerOptional = getCustomerById(id);
-        if (customerOptional.isEmpty()) {
-            return Optional.empty();
-        }
+    public Customer patchCustomer(Long id, RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException {
+        Customer customer = getCustomerById(id);
 
         Field[] dtoFields = RequestPatchCustomerDto.class.getDeclaredFields();
         Field[] entityFields = Customer.class.getDeclaredFields();
@@ -92,7 +90,7 @@ public class CustomerServiceImpl implements CustomerService {
                 for (Field entityField : entityFields) {
                     if (entityField.getName().equals(fieldName) && entityField.getType().equals(dtoField.getType())) {
                         entityField.setAccessible(true);
-                        entityField.set(customerOptional.get(), value);
+                        entityField.set(customer, value);
                         entityField.setAccessible(false);
                         break;
                     }
@@ -101,40 +99,29 @@ public class CustomerServiceImpl implements CustomerService {
             dtoField.setAccessible(false);
         }
 
-        customerRepository.save(customerOptional.get());
-        return customerOptional;
+        customerRepository.save(customer);
+        return customer;
     }
 
     @Override
     @Transactional
     public boolean deleteAccountsByCustomerId(long id) {
-        Optional<Customer> customerOptional = getCustomerById(id);
-        if (customerOptional.isEmpty()) {
-            return false;
-        }
+        Customer customer = getCustomerById(id);
 
-        Customer customer = customerOptional.get();
         List<Account> accounts = customer.getAccounts();
 
         if (!accounts.isEmpty()) {
             accountRepository.deleteAll(accounts);
+            customer.getAccounts().clear();
+            customerRepository.save(customer);
         }
-
-        customer.getAccounts().clear();
-        customerRepository.save(customer);
         return true;
     }
 
     @Override
     @Transactional
     public CustomerStatus deleteAccountByCustomerId(long id, String accountNumber) {
-        Optional<Customer> customerOptional = getCustomerById(id);
-
-        if (customerOptional.isEmpty()) {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
-        }
-
-        Customer customer = customerOptional.get();
+        Customer customer = getCustomerById(id);
 
         boolean removed = customer.getAccounts().removeIf(account -> account.getNumber().equals(accountNumber));
         if (removed) {
@@ -142,20 +129,14 @@ public class CustomerServiceImpl implements CustomerService {
             customerRepository.save(customer);
             return CustomerStatus.SUCCESS;
         } else {
-            return CustomerStatus.CARD_NOT_FOUND;
+            throw new CardNotFoundException(CustomerStatus.CARD_NOT_FOUND.getMessage());
         }
     }
 
     @Override
     @Transactional
     public Account createAccountByCustomerId(long id, Currency currency) {
-        Optional<Customer> customerOptional = getCustomerById(id);
-
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
-
-        Customer customer = customerOptional.get();
+        Customer customer = getCustomerById(id);
 
         Account newAccount = new Account(currency, customer);
         customer.getAccounts().add(newAccount);
@@ -167,18 +148,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerStatus addEmployerToCustomer(long customerId, long employerId) {
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
+        Customer customer = getCustomerById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);
 
-        if (customerOptional.isEmpty()) {
-            return CustomerStatus.EMPLOYER_NOT_FOUND;
-        }
-
         if (employerOptional.isEmpty()) {
-            return CustomerStatus.UNEXPECTED;
+            throw new EmployerNotFoundException(EmployerStatus.EMPLOYER_NOT_FOUND.getMessage());
         }
 
-        Customer customer = customerOptional.get();
         Employer employer = employerOptional.get();
 
         boolean customerUpdated = false;
@@ -206,18 +182,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerStatus removeEmployerFromCustomer(long customerId, long employerId) {
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
+        Customer customer = getCustomerById(customerId);
         Optional<Employer> employerOptional = employerRepository.findById(employerId);
 
-        if (customerOptional.isEmpty()) {
-            return CustomerStatus.CUSTOMER_NOT_FOUND;
-        }
-
         if (employerOptional.isEmpty()) {
-            return CustomerStatus.EMPLOYER_NOT_FOUND;
+            throw new CustomerNotFoundException(CustomerStatus.EMPLOYER_NOT_FOUND.getMessage());
         }
 
-        Customer customer = customerOptional.get();
         Employer employer = employerOptional.get();
 
         boolean customerUpdated = false;

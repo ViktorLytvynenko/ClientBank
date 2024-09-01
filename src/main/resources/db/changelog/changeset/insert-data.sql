@@ -25,9 +25,9 @@ VALUES ('Viktor', 'viktor@gmail.com', 35, 'qWerty', '+1234567890', CURRENT_TIMES
        ('Anastasia', 'anastasia@gmail.com', 32, 'qWerty', '+1982345670', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Vladimir', 'vladimir@gmail.com', 45, 'qWerty', '+1092837465', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- INSERT INTO accounts (number, currency, balance, customer_id, created_date, last_modified_date)
--- VALUES (uuid_generate_v4(), 'USD', 100.0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
---        (uuid_generate_v4(), 'USD', 50.0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO accounts (number, currency, balance, customer_id, created_date, last_modified_date)
+VALUES (uuid_generate_v4(), 'USD', 100.0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (uuid_generate_v4(), 'USD', 50.0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO employers (name, address, created_date, last_modified_date)
 VALUES ('Amazon', 'Seattle, USA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

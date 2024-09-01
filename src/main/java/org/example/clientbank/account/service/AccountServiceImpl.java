@@ -3,15 +3,19 @@ package org.example.clientbank.account.service;
 import lombok.AllArgsConstructor;
 import org.example.clientbank.account.Account;
 import org.example.clientbank.account.db.AccountRepository;
+import org.example.clientbank.account.status.AccountStatus;
+import org.example.clientbank.exceptions.InsufficientBalanceException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.example.clientbank.exceptions.AccountNotFoundException;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Optional<Account> getAccountByAccountNumber(String number) {
@@ -23,11 +27,12 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountOptional = getAccountByAccountNumber(number);
 
         if (accountOptional.isEmpty()) {
-            throw new AccountNotFoundException("Account not found.");
+            throw new AccountNotFoundException(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
         }
 
         Account account = accountOptional.get();
         account.setBalance(account.getBalance() + sum);
+        simpMessagingTemplate.convertAndSend("/topic/balance", account);
         accountRepository.save(account);
         return account;
     }
@@ -37,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountOptional = getAccountByAccountNumber(number);
 
         if (accountOptional.isEmpty()) {
-            throw new AccountNotFoundException("Account not found.");
+            throw new AccountNotFoundException(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
         }
 
         Account account = accountOptional.get();
@@ -47,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.save(account);
             return account;
         } else {
-            return null;
+            throw new InsufficientBalanceException(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
         }
     }
 
@@ -58,10 +63,10 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> toAccountOptional = getAccountByAccountNumber(numberTo);
 
         if (fromAccountOptional.isEmpty()) {
-            throw new AccountNotFoundException("Account not found.");
+            throw new AccountNotFoundException(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
         }
         if (toAccountOptional.isEmpty()) {
-            throw new AccountNotFoundException("Account not found.");
+            throw new AccountNotFoundException(AccountStatus.ACCOUNT_NOT_FOUND.getMessage());
         }
 
         if (fromAccountOptional.get().getBalance() >= sum) {
@@ -71,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.save(toAccountOptional.get());
             return fromAccountOptional.get();
         } else {
-            return null;
+            throw new InsufficientBalanceException(AccountStatus.INSUFFICIENT_FUNDS.getMessage());
         }
     }
 }

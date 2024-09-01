@@ -12,9 +12,10 @@ import org.example.clientbank.account.service.AccountServiceImpl;
 import org.example.clientbank.account.status.AccountStatus;
 import org.example.clientbank.dto.BaseResponseDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.security.auth.login.AccountNotFoundException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
@@ -29,7 +30,7 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
     @PostMapping("/add_funds")
-    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> addFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) throws AccountNotFoundException {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> addFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to add funds");
 
         BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
@@ -42,7 +43,7 @@ public class AccountController {
     }
 
     @PostMapping("/withdraw_funds")
-    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> withdrawFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) throws AccountNotFoundException {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> withdrawFunds(@Valid @RequestBody AddWithdrawFundsModel addWithdrawFundsModel) {
         log.info("Trying to withdraw funds");
 
         BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();
@@ -55,7 +56,7 @@ public class AccountController {
     }
 
     @PostMapping("/send_funds")
-    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> sendFunds(@Valid @RequestBody SendFundsModel sendFundsModel) throws AccountNotFoundException {
+    public ResponseEntity<BaseResponseDto<ResponseAccountDto>> sendFunds(@Valid @RequestBody SendFundsModel sendFundsModel) {
         log.info("Trying to send funds");
 
         BaseResponseDto<ResponseAccountDto> baseResponseDto = new BaseResponseDto<>();

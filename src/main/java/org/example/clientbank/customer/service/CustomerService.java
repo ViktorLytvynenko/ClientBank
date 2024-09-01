@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CustomerService {
 
@@ -20,13 +19,13 @@ public interface CustomerService {
 
     Page<Customer> findAllFiltered(Pageable pageable);
 
-    Optional<Customer> getCustomerById(long id);
+    Customer getCustomerById(long id);
 
     Customer createCustomer(Customer customer);
 
-    Optional<Customer> updateCustomer(Long id, RequestCustomerDto requestCustomerDto);
+    Customer updateCustomer(Long id, RequestCustomerDto requestCustomerDto);
 
-    Optional<Customer> patchCustomer(Long id, RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException;
+    Customer patchCustomer(Long id, RequestPatchCustomerDto requestPatchCustomerDto) throws IllegalAccessException;
 
     boolean deleteAccountsByCustomerId(long id);
 
